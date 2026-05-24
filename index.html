@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIIP Level 4 Lesson 15 Quiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', 'Battambang', sans-serif;
+            background-color: #0A0E1A;
+            color: white;
+        }
+        .card-bg {
+            background-color: #161B2E;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4">
+
+    <header class="w-full max-w-2xl text-center py-4 border-b border-gray-800">
+        <h1 class="text-xl font-bold text-[#FFC107]">វិញ្ញាសាសាកល្បង KIIP កម្រិត ៤ (중간평가)</h1>
+        <p class="text-sm text-[#94A3B8] mt-1">제15과 법과 질서 (ច្បាប់ និងសណ្ដាប់ធ្នាប់)</p>
+    </header>
+
+    <main class="w-full max-w-2xl flex-grow flex flex-col justify-center my-6">
+        
+        <div id="start-screen" class="card-bg p-6 rounded-2xl shadow-xl text-center">
+            <h2 class="text-lg font-bold mb-4 text-white">សូមស្វាគមន៍មកកាន់ការតេស្តមេរៀនទី ១៥</h2>
+            <p class="text-sm text-[#94A3B8] mb-6">វិញ្ញាសានេះមានសរុបចំនួន ៣០ សំណួរ ដែលដកស្រង់ចេញពីខ្លឹមសារសៀវភៅស្តង់ដារ ទាក់ទងនឹងច្បាប់ សណ្ដាប់ធ្នាប់សាធារណៈ និងវេយ្យាករណ៍សំខាន់ៗ។</p>
+            <button onclick="quizManager.start()" class="w-full bg-[#FFC107] text-black font-bold py-3 px-6 rounded-xl text-md hover:bg-yellow-500 transition active:scale-95 cursor-pointer">
+                ចាប់ផ្ដើមធ្វើតេស្ត (Start)
+            </button>
+        </div>
+
+        <div id="quiz-screen" class="hidden flex flex-col gap-4">
+            <div class="flex justify-between items-center text-sm px-1">
+                <span id="question-number" class="text-[#FFC107] font-medium">សំណួរទី 1/30</span>
+                <span id="score-display" class="text-[#10B981]">ពិន្ទុ: 0</span>
+            </div>
+            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-[#FFC107] h-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+
+            <div class="card-bg p-6 rounded-2xl shadow-xl relative">
+                <span id="section-tag" class="absolute top-3 right-4 text-xs font-bold px-2 py-1 bg-blue-900/50 text-blue-300 rounded">ផ្នែក</span>
+                
+                <button onclick="quizManager.toggleTTS()" class="mb-3 bg-gray-800 hover:bg-gray-700 p-2 rounded-xl text-lg flex items-center gap-2 border border-gray-700 cursor-pointer">
+                    <span id="tts-icon">🔈</span> <span class="text-xs text-gray-300 font-bold">អានសម្លេង</span>
+                </button>
+
+                <div id="question-text-ko" class="text-base font-medium text-white leading-relaxed mb-2"></div>
+                <div id="question-text-km" class="hidden text-sm text-[#94A3B8] border-t border-gray-800 pt-2 mt-2"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2">
+                <button id="powerup-5050" onclick="quizManager.use5050()" class="bg-gray-800 hover:bg-gray-700 text-xs py-2 px-1 rounded-xl font-bold text-gray-300 border border-gray-700 active:scale-95 transition cursor-pointer">🌓 កាត់ ៥០/៥០</button>
+                <button id="powerup-trans-q" onclick="quizManager.translateQuestion()" class="bg-gray-800 hover:bg-gray-700 text-xs py-2 px-1 rounded-xl font-bold text-gray-300 border border-gray-700 active:scale-95 transition cursor-pointer">🔍 បកប្រែសំណួរ</button>
+                <button id="powerup-trans-a" onclick="quizManager.translateAnswers()" class="bg-gray-800 hover:bg-gray-700 text-xs py-2 px-1 rounded-xl font-bold text-gray-300 border border-gray-700 active:scale-95 transition cursor-pointer">💡 បកប្រែចម្លើយ</button>
+            </div>
+
+            <div id="options-container" class="flex flex-col gap-3 mt-2">
+                </div>
+
+            <div id="explanation-card" class="hidden card-bg p-5 rounded-2xl border transition-all duration-300">
+                <h3 id="feedback-title" class="font-bold text-md mb-2">ចម្លើយ</h3>
+                <p id="explanation-text-km" class="text-sm text-gray-200 leading-relaxed mb-3"></p>
+                
+                <div class="border-t border-gray-800 pt-3 mt-2">
+                    <h4 class="text-xs font-bold text-[#FFC107] uppercase tracking-wider mb-2">បកប្រែពាក្យក្នុងសំណួរ (Vocab Breakdown):</h4>
+                    <ul id="vocab-list" class="text-xs text-[#94A3B8] space-y-1 list-disc list-inside">
+                        </ul>
+                </div>
+            </div>
+
+            <button id="next-btn" onclick="quizManager.next()" class="hidden w-full bg-[#FFC107] text-black font-bold py-3 px-6 rounded-xl text-md hover:bg-yellow-500 transition active:scale-95 cursor-pointer">
+                សំណួរបន្ទាប់ (Next) ➔
+            </button>
+        </div>
+
+        <div id="result-screen" class="hidden card-bg p-6 rounded-2xl shadow-xl text-center">
+            <h2 class="text-xl font-bold mb-2 text-[#FFC107]">លទ្ធផលនៃការធ្វើតេស្ត!</h2>
+            <p id="final-score" class="text-3xl font-extrabold my-4 text-[#10B981]">0 / 30</p>
+            <p id="result-message" class="text-sm text-gray-300 mb-6"></p>
+            <div class="flex flex-col gap-3">
+                <button onclick="quizManager.restart()" class="w-full bg-[#10B981] text-white font-bold py-3 px-6 rounded-xl text-md hover:bg-emerald-600 transition cursor-pointer">
+                    ធ្វើតេស្តឡើងវិញ (Restart Quiz)
+                </button>
+                <button onclick="quizManager.activateReviewMode()" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-xl text-md hover:bg-blue-700 transition cursor-pointer">
+                    ឆែកមើលចម្លើយឡើងវិញ (Review Mode)
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full max-w-2xl text-center py-4 text-xs text-gray-600 border-t border-gray-950 mt-4">
+        &copy; 2026 KIIP Level 4 Quiz App. All Rights Reserved.
+    </footer>
+
+    <script>
+        // SCRIPT SYSTEM SPEECH / Google TTS Configuration
+        const audioEngine = {
+            isPlaying: false,
+            audioElement: null,
+            speechSynthesisUtterance: null,
+
+            speak(textKo, textKm) {
+                this.stop();
+                this.isPlaying = true;
+                document.getElementById('tts-icon').innerText = '⏸️';
+
+                // Combine text for smooth read out, separated by a natural pause
+                const fullText = `${textKo} ... ... ${textKm}`;
+                const googleTtsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ko&client=tw-ob&q=${encodeURIComponent(textKo)}`;
+
+                // Try Primary: Google TTS
+                this.audioElement = new Audio(googleTtsUrl);
+                this.audioElement.play()
+                    .then(() => {
+                        // Once Korean finishes, speak Khmer via standard system TTS if needed, or simply handle end
+                        this.audioElement.onended = () => {
+                            this.speakKhmerFallback(textKm);
+                        };
+                    })
+                    .catch(err => {
+                        console.warn("Google TTS blocked/failed. Switching to Dual-Engine Fallback (Web Speech API)...");
+                        this.speakFallback(textKo, textKm);
+                    });
+            },
+
+            speakKhmerFallback(textKm) {
+                if (!window.speechSynthesis) return this.stop();
+                this.speechSynthesisUtterance = new SpeechSynthesisUtterance(textKm);
+                this.speechSynthesisUtterance.lang = 'km-KH';
+                this.speechSynthesisUtterance.onend = () => this.stop();
+                this.speechSynthesisUtterance.onerror = () => this.stop();
+                window.speechSynthesis.speak(this.speechSynthesisUtterance);
+            },
+
+            speakFallback(textKo, textKm) {
+                if (!window.speechSynthesis) {
+                    alert("ឧបករណ៍របស់អ្នកមិនគាំទ្រប្រព័ន្ធសំឡេងអានទេ (Web Speech API Not Supported)");
+                    this.stop();
+                    return;
+                }
+                window.speechSynthesis.cancel();
+                
+                this.speechSynthesisUtterance = new SpeechSynthesisUtterance(textKo);
+                this.speechSynthesisUtterance.lang = 'ko-KR';
+                
+                this.speechSynthesisUtterance.onend = () => {
+                    this.speakKhmerFallback(textKm);
+                };
+                this.speechSynthesisUtterance.onerror = () => this.stop();
+                window.speechSynthesis.speak(this.speechSynthesisUtterance);
+            },
+
+            stop() {
+                this.isPlaying = false;
+                document.getElementById('tts-icon').innerText = '🔈';
+                if (this.audioElement) {
+                    this.audioElement.pause();
+                    this.audioElement = null;
+                }
+                if (window.speechSynthesis) {
+                    window.speechSynthesis.cancel();
+                }
+            },
+
+            toggle(textKo, textKm) {
+                if (this.isPlaying) {
+                    this.stop();
+                } else {
+                    this.speak(textKo, textKm);
+                }
+            }
+        };
+
+        // Complete 30-Question Database for Level 4 Lesson 15 (법과 질서)
+        const quizData = [
+            // PART 1: Vocabulary & Grammar (Q1 - Q10)
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "다음 빈칸에 들어갈 알맞은 단어를 고르십시오.\n\n공공장소에서 침을 뱉거나 담배를 피우는 행위는 (      )에 해당하여 벌금을 내야 합니다.",
+                questionKm: "សូមជ្រើសរើសពាក្យត្រឹមត្រូវដើម្បីបំពេញចន្លោះ។\n\nការស្តោះទឹកមាត់ ឬជក់បារីនៅទីសាធារណៈ គឺត្រូវចាត់ចូលជា (      ) ដែលត្រូវរងការផាកពិន័យ។",
+                options: [
+                    { ko: "① 경범죄", km: "បទល្មើសស្រាល / បទមជ្ឈិមតូចតាច", correct: true },
+                    { ko: "② 강력범죄", km: "បទឧក្រិដ្ឋកម្មធ្ងន់ធ្ងរ", correct: false },
+                    { ko: "③ 재산범죄", km: "បទល្មើសទ្រព្យសម្បត្តិ", correct: false },
+                    { ko: "④ 사이버범죄", km: "បទល្មើសស៊ីប៊ែរ (តាមអ៊ីនធឺណិត)", correct: false }
+                ],
+                explanation: "공공장소에서 침을 뱉는 행위나 무단횡단 등은 법질서를 위반하는 기초질서 위반행위로, '경범죄(Minor offenses)'로 분류되어 범칙금이나 과태료가 부과됩니다.\n\n[របៀបអាន៖ ឃ្យង់-ប៊ំ-ជ្វេ]",
+                vocab: [["경범죄", "បទល្មើសស្រាល"], ["공공장소", "ទីសាធារណៈ"], ["벌금", "ប្រាក់ផាកពិន័យ"], ["뱉다", "ស្តោះចេញ"]]
+            },
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "다음 밑줄 친 부분과 의미가 가장 비슷한 것을 고르십시오.\n\n한국에서는 법을 엄격하게 법을 <u>준수해야</u> 안정적인 체류가 가능하다.",
+                questionKm: "សូមជ្រើសរើសពាក្យដែលមានន័យដូច ឬស្រដៀងនឹងពាក្យដែលបានគូសបន្ទាត់ក្រោម។\n\nនៅប្រទេសកូរ៉េ ទាល់តែយើង<u>គោរពច្បាប់</u>ឱ្យបានម៉ឺងម៉ាត់ ទើបអាចស្នាក់នៅដោយមានស្ថិរភាពបាន។",
+                options: [
+                    { ko: "① 지켜야", km: "ត្រូវតែគោរព / រក្សា", correct: true },
+                    { ko: "② 어겨야", km: "ត្រូវតែល្មើស / បំពាន", correct: false },
+                    { ko: "③ 제정해야", km: "ត្រូវតែបង្កើតច្បាប់", correct: false },
+                    { ko: "④ 수정해야", km: "ត្រូវតែខ្ទាស់កែប្រែ", correct: false }
+                ],
+                explanation: "'준수하다'는 법이나 규칙, 명령 등을 올바르게 따르고 지키는 것을 의미하므로 '지키다'와 의미가 같습니다.\n\n[របៀបអាន៖ ជូន-ស៊ូ-ហា-ដា = ជី-ឃី-ដា]",
+                vocab: [["준수하다", "គោរពច្បាប់"], ["지키다", "រក្សា/គោរព"], ["엄격하게", "យ៉ាងម៉ឺងម៉ាត់"], ["체류", "ការស្នាក់នៅ"]]
+            },
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "다음 빈칸에 들어갈 알맞은 것을 고르십시오.\n\n뉴스에서 들으셨(      ) 내년부터 이민자 관련 체류법이 일부 변경됩니다.",
+                questionKm: "សូមជ្រើសរើសទម្រង់ត្រឹមត្រូវដើម្បីបំពេញចន្លោះ។\n\nដូចដែលអ្នកបានឮ (      ) នៅក្នុងព័ត៌មាន ច្បាប់ស្នាក់នៅទាក់ទងនឹងអន្តោប្រវេសន៍នឹងត្រូវផ្លាស់ប្តូរផ្នែកខ្លះចាប់ពីឆ្នាំក្រោយ។",
+                options: [
+                    { ko: "① 다시피", km: "ដូចដែល... (ទម្រង់វេយ្យាករណ៍ -다시피)", correct: true },
+                    { ko: "② 다시피 해서", km: "ស្ទើរតែដូចជា...", correct: false },
+                    { ko: "③ 는 법이다", km: "ជាធម្មតាជៀសមិនរួច / តែងតែមានចែងមក", correct: false },
+                    { ko: "④ 도록 하다", km: "ធ្វើការណែនាំឱ្យធ្វើអ្វីមួយ", correct: false }
+                ],
+                explanation: "'-다시피'는 듣는 사람이 이미 알고 있는 바를 확인하며 말할 때 사용하는 វេយ្យាករណ៍ (ដូចដែលបានដឹង/បានឮ)។ 뉴스에서 들은 사실을 확인하므로 '들으셨다시피'가 맞습니다.\n\n[របៀបអាន៖ ទឺ-រឿ-សត-ដា-ស៊ី-ភី]",
+                vocab: [["들으셨다시피", "ដូចដែលបានឮ"], ["내년", "ឆ្នាំក្រោយ"], ["변경되다", "ត្រូវផ្លាស់ប្តូរ"]]
+            },
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "사람은 누구나 잘못을 하면 법에 따라 처벌을 (      ).",
+                questionKm: "មនុស្សគ្រប់រូប ឱ្យតែធ្វើខុស គឺតែងតែត្រូវទទួលទណ្ឌកម្មទៅតាមច្បាប់ជាធម្មតា (      )។",
+                options: [
+                    { ko: "① 받기 마련이다", km: "គង់តែនឹងទទួលបាន (ន័យប្រហាក់ប្រហែល)", correct: false },
+                    { ko: "② 받는 법이다", km: "តែងតែ...ជាធម្មតា / ជាសច្ចភាព (វេយ្យាករណ៍ -는 법이다)", correct: true },
+                    { ko: "③ 받을 뿐이다", km: "គ្រាន់តែទទួលប៉ុណ្ណោះ", correct: false },
+                    { ko: "④ 받다시피 했다", km: "ស្ទើរតែទទួលបានហើយ", correct: false }
+                ],
+                explanation: "'-는 법이다'는 당연한 이치나 정해진 규칙을 나타낼 때 사용합니다 (តែងតែបែបនោះជាធម្មតា/ជាច្បាប់ធម្មជាតិ)។ 잘못을 하면 처벌을 받는 것이 당연한 사회적 이치이므로 '받는 법이다'가 가장 정확합니다.\n\n[របៀបអាន៖ បាន-នឺន ប៊ប-អ៊ី-ដា]",
+                vocab: [["처벌", "ការដាក់ទោស/ទណ្ឌកម្ម"], ["따라", "យោងតាម/ទៅតាម"], ["잘못", "កំហុស"]]
+            },
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "횡단보도가 없는 곳에서 길을 건너는 행위를 (      )(이)라고 하며, 이는 기초질서 위반입니다.",
+                questionKm: "សកម្មភាពឆ្លងផ្លូវនៅកន្លែងដែលគ្មានផ្លូវឆ្នូតពណ៌ស គេហៅថា (      ) ហើយវាជាការល្មើសសណ្ដាប់ធ្នាប់មូលដ្ឋាន។",
+                options: [
+                    { ko: "① 무단횡단", km: "ការឆ្លងផ្លូវផ្តេសផ្តាស (គ្មាន زیبرا)", correct: true },
+                    { ko: "② 불법체류", km: "ការស្នាក់នៅខុសច្បាប់", correct: false },
+                    { ko: "③ 무면허운전", km: "ការបើកបរគ្មានប័ណ្ណបើកបរ", correct: false },
+                    { ko: "④ 음주운전", km: "ការបើកបរស្រវឹង", correct: false }
+                ],
+                explanation: "횡단보도나 육교 등이 없는 곳에서 도로를 무단으로 가로질러 건너는 것은 '무단횡단(Illegal street crossing)'입니다.\n\n[របៀបអាន៖ មូ-ដាន់-ហ្វេង់-ដាន់]",
+                vocab: [["무단횡단", "ការឆ្លងផ្លូវខុសច្បាប់"], ["기초질서", "សណ្ដាប់ធ្នាប់មូលដ្ឋាន"], ["건너다", "ឆ្លងកាត់"]]
+            },
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "다음 빈칸에 알맞은 말을 고르십시오.\n\n법은 사회 구성원들이 다 같이 안전하게 살기 위해 만든 (      )이므로 반드시 지켜야 한다.",
+                questionKm: "សូមជ្រើសរើសពាក្យត្រឹមត្រូវដើម្បីបំពេញចន្លោះ។\n\nច្បាប់គឺជា (      ) ដែលបង្កើតឡើងដើម្បីឱ្យសមាជិកសង្គមរស់នៅជាមួយគ្នាយ៉ាងមានសុវត្ថិភាព ដូច្នេះត្រូវតែគោរពវា។",
+                options: [
+                    { ko: "① 약속", km: "ការសន្យា / កិច្ចសន្យារួម", correct: true },
+                    { ko: "② 권리", km: "សិទ្ធិ", correct: false },
+                    { ko: "③ 의무", km: "កាតព្វកិច្ច", correct: false },
+                    { ko: "④ 재판", km: "ការកាត់ក្តី/ជំនុំជម្រះ", correct: false }
+                ],
+                explanation: "법은 사회적 약속(Social agreement)입니다. 서로의 안전과 질서를 위해 구성원들이 동의하고 만든 규칙입니다.\n\n[របៀបអាន៖ យ៉ាក់-សុប]",
+                vocab: [["약속", "ការសន្យា/កិច្ចព្រមព្រៀង"], ["구성원", "សមាជិក"], ["반드시", "ជាដាច់ខាត"]]
+            },
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "여러분도 (      ) 한국의 법을 위반하면 체류 연장에 불이익을 받을 수 있습니다.",
+                questionKm: "ដូចដែលអ្នករាល់គ្នា (      ) ប្រសិនបើល្មើសច្បាប់ប្រទេសកូរ៉េ អាចនឹងរងផលប៉ះពាល់អវិជ្ជមានដល់ការបន្តទិដ្ឋាការស្នាក់នៅ។",
+                options: [
+                    { ko: "① 아시다시피", km: "ដូចដែលបានដឹងស្រាប់ហើយ (វេយ្យាករណ៍ -다시피)", correct: true },
+                    { ko: "② 아는 법이다", km: "តែងតែដឹងជាធម្មតា", correct: false },
+                    { ko: "③ 알기 위해서", km: "ដើម្បីដឹង", correct: false },
+                    { ko: "④ 알다시피 해서", km: "ស្ទើរតែដូចជាដឹង", correct: false }
+                ],
+                explanation: "'아시다시피'는 '알다'에 높임의 '-시-'와 '-다시피'가 결합한 형태로, '당신이 이미 아는 것과 같이'라는 뜻입니다.\n\n[របៀបអាន៖ អា-ស៊ី-ដា-ស៊ី-ភី]",
+                vocab: [["아시다시피", "ដូចដែលបានដឹងស្រាប់"], ["위반하다", "ល្មើស/បំពាន"], ["불이익", "ផលប៉ះពាល់/ការខាតបង់"]]
+            },
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "겨울이 지나고 봄이 오면 날씨가 따뜻해(      ).",
+                questionKm: "នៅពេលដែលរដូវរងាកន្លងផុតទៅ ហើយរដូវផ្ការីកចូលមកដល់ ធាតុអាកាសតែងតែប្រែជាកក់ក្តៅ (      ) វាជាច្បាប់ធម្មជាតិ។",
+                options: [
+                    { ko: "① 지다시피 했다", km: "ស្ទើរតែប្រែជា", correct: false },
+                    { ko: "② 지는 법이다", km: "តែងតែប្រែជា...ជាធម្មតា (វេយ្យាករណ៍ -는 법이다)", correct: true },
+                    { ko: "③ 질 뿐이다", km: "គ្រាន់តែប្រែជាប៉ុណ្ណោះ", correct: false },
+                    { ko: "④ 지도록 했다", km: "បានធ្វើឱ្យទៅជា", correct: false }
+                ],
+                explanation: "계절의 변화나 자연의 이치처럼 당연한 현상에는 '-는 법이다'를 사용하여 표현하는 것이 가장 자연스럽습니다.\n\n[របៀបអាន៖ តា-ត៊ឺត-ហេ-ជី-នឺន ប៊ប-អ៊ី-ដា]",
+                vocab: [["따뜻해지다", "ប្រែជាកក់ក្តៅ"], ["자연의 이치", "ច្បាប់ធម្មជាតិ"], ["지나다", "កន្លងហួស"]]
+            },
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "법을 어겨서 타인에게 피해를 주었다면 손해를 (      ) 해야 한다.",
+                questionKm: "ប្រសិនបើបំពានច្បាប់បង្កការខូចខាតដល់អ្នកដទៃ យើងត្រូវតែ (      ) នូវការខូចខាតនោះ។",
+                options: [
+                    { ko: "① 배상", km: "សងការខូចខាត / ជួសជុលការខូចខាត (배상/보상)", correct: true },
+                    { ko: "② 제정", km: "ការបង្កើតច្បាប់", correct: false },
+                    { ko: "③ 준수", km: "ការគោរពតាម", correct: false },
+                    { ko: "④ 체류", km: "ការស្នាក់នៅ", correct: false }
+                ],
+                explanation: "다른 사람에게 손해나 피해를 입혔을 때 이를 물어주는 행위를 '손해배상(Compensation for damages)'이라고 합니다.\n\n[របៀបអាន៖ បេ-សាំង]",
+                vocab: [["손해배상", "ការសងការខូចខាត"], ["타인", "អ្នកដទៃ"], ["피해", "គ្រោះថ្នាក់/ការខូចខាត"]]
+            },
+            {
+                section: "ពាក្យសព្ទ និងវេយ្យាករណ៍",
+                questionKo: "지하철 안에서 큰 소리로 전화를 통화하면 다른 사람에게 방해가 (      ).",
+                questionKm: "បើនិយាយទូរស័ព្ទសំឡេងខ្លាំងៗនៅក្នុងរថភ្លើងក្រោមដី វាគង់តែនឹងបង្កការរំខានដល់អ្នកដទៃជាធម្មតា (      )។",
+                options: [
+                    { ko: "① 되는 법이다", km: "តែងតែបង្កជា...ជាធម្មតា (-는 법이다)", correct: true },
+                    { ko: "④ 되다시피 했다", km: "ស្ទើរតែបានក្លាយជា", correct: false },
+                    { ko: "② 되기 마련법이다", km: "ទម្រង់ខុសទម្រង់", correct: false },
+                    { ko: "③ 될 뿐이다", km: "គ្រាន់តែរំខានប៉ុណ្ណោះ", correct: false }
+                ],
+                explanation: "공공장소에서 소란을 피우면 당연히 타인에게 방해가 되므로 당연한 결과를 나타내는 '되는 법이다'가 맞습니다.\n\n[របៀបអាន៖ ទ្វេ-នឺន ប៊ប-អ៊ី-ដា]",
+                vocab: [["방해", "ការរំខាន"], ["큰 소리", "សំឡេងខ្លាំង"], ["통화하다", "និយាយទូរស័ព្ទ"]]
+            },
+
+            // PART 2: Reading Comprehension (Q11 - Q25)
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "[Q11-Q12] 다음 글을 읽고 물음에 답하십시오.\n\n법은 사회 질서를 유지하고 국민의 권리를 보호하기 위해 만든 최소한의 사회적 약속이다. 만약 법이 없다면 사회는 혼란에 빠지고 힘이 강한 사람이 약한 사람에게 피해를 주어도 해결할 방법이 없을 것이다. 따라서 법은 공동체의 평화를 위해 모든 사람이 공평하게 준수해야 한다.\n\nQ11. 이 글의 중심 내용으로 가장 알맞은 것은 무엇입니까?",
+                questionKm: "[សំណួរ ១១-១២] អានអត្ថបទខាងក្រោម រួចឆ្លើយសំណួរ។\n\nច្បាប់គឺជាកិច្ចសន្យាសង្គមអប្បបរមាដែលបង្កើតឡើងដើម្បីរក្សាសណ្ដាប់ធ្នាប់សង្គម និងការពារសិទ្ធិរបស់ប្រជាពលរដ្ឋ។ ប្រសិនបើគ្មានច្បាប់ទេ សង្គមនឹងធ្លាក់ក្នុងភាពវឹកវរ ហើយទោះបីជាអ្នកមានអំណាចខ្លាំងធ្វើបាបអ្នកខ្សោយ ក៏គ្មានវិធីដោះស្រាយដែរ។ ដូច្នេះ ដើម្បីសន្តិភាពសហគមន៍ មនុស្សគ្រប់រូបត្រូវតែគោរពច្បាប់ដោយស្មើភាពគ្នា។\n\nQ11. តើខ្លឹមសារចម្បងនៃអត្ថបទនេះគឺអ្វី?",
+                options: [
+                    { ko: "① 법이 필요한 이유와 준수의 중요성", km: "មូលហេតុដែលត្រូវការច្បាប់ និងសារៈសំខាន់នៃការគោរពច្បាប់", correct: true },
+                    { ko: "② 법을 제정하는 구체적인 절차", km: "នីតិវិធីលម្អិតក្នុងការបង្កើតច្បាប់", correct: false },
+                    { ko: "③ 법을 위반했을 때 받는 처벌 종류", km: "ប្រភេទនៃការដាក់ទោសនៅពេលល្មើសច្បាប់", correct: false },
+                    { ko: "④ 힘이 강한 사람들의 사회적 역할", km: "តួនាទីសង្គមរបស់មនុស្សមានអំណាចខ្លាំង", correct: false }
+                ],
+                explanation: "이 글은 법이 사회 질서 유지와 국민 권리 보호를 위해 왜 필요한지 설명하고, 평화를 위해 모두가 준수해야 함을 강조하고 있습니다.\n\n[របៀបអាន៖ ភុប-អ៊ី ភីល-យ៉ូ-ហាន អ៊ី-យូ]",
+                vocab: [["질서 유지", "ការរក្សាសណ្ដាប់ធ្នាប់"], ["권리 보호", "ការការពារសិទ្ធិ"], ["혼란", "ភាពវឹកវរ"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "Q12. 위 글의 내용과 일치하는(맞는) 것은 무엇입니까?",
+                questionKm: "Q12. តើចម្លើយមួយណាដែល 'ត្រឹមត្រូវ' ទៅនឹងខ្លឹមសារអត្ថបទខាងលើ?",
+                options: [
+                    { ko: "① 법은 힘이 강한 사람들만을 위해 존재한다.", km: "ច្បាប់មានវត្តមានឡើងសម្រាប់តែមនុស្សមានអំណាចខ្លាំងប៉ុណ្ណោះ។", correct: false },
+                    { ko: "② 법이 없어도 사회는 평화롭게 유지될 수 있다.", km: "ទោះបីគ្មានច្បាប់ ក៏សង្គមអាចរក្សាសន្តិភាពបានដែរ។", correct: false },
+                    { ko: "③ 법은 국민의 권리를 보호하는 역할을 한다.", km: "ច្បាប់ដើរតួនាទីក្នុងការការពារសិទ្ធិរបស់ប្រជាពលរដ្ឋ។", correct: true },
+                    { ko: "④ 법은 모든 사람에게 공평하게 적용되지 않는다.", km: "ច្បាប់មិនត្រូវបានអនុវត្តស្មើភាពគ្នាចំពោះមនុស្សគ្រប់គ្នាឡើយ។", correct: false }
+                ],
+                explanation: "본문에 '국민의 권리를 보호하기 위해 만든'이라고 명시되어 있으므로 ③번이 글의 내용과 정확히 일치합니다.\n\n[របៀបអាន៖ ភុប-អ៊ឺន គុង-មីន-អ៊េ គ្វន-រី-រ៊ឺល ភូ-ហូ-ហាន-ដា]",
+                vocab: [["일치하다", "ត្រូវគ្នា/ដូចគ្នា"], ["존재하다", "មានវត្តមាន/រស់នៅ"], ["보호", "ការការពារ"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "[Q13-Q14] 다음 글을 읽고 물음에 답하십시오.\n\n한국 사회에서는 일상생활 속에서 꼭 지켜야 하는 기초질서가 있다. 예를 들어 쓰레기는 정해진 종량제 봉투에 넣어 지정된 장소에 버려야 하며, 밤늦은 시간에 큰 소음으로 이웃에게 피해를 주어서는 안 된다. 이러한 규칙들을 어기면 경범죄로 처벌을 받거나 과태료를 낼 수 있다.\n\nQ13. 이 글의 제목으로 가장 알맞은 것은?",
+                questionKm: "[សំណួរ ១៣-១៤] អានអត្ថបទខាងក្រោម រួចឆ្លើយសំណួរ។\n\nនៅក្នុងសង្គមកូរ៉េ មានសណ្ដាប់ធ្នាប់មូលដ្ឋានដែលត្រូវតែគោរពដាច់ខាតក្នុងជីវភាពរស់នៅប្រចាំថ្ងៃ។ ឧទាហរណ៍ សម្រាមត្រូវតែដាក់ក្នុងថង់ប្រភេទតាមតំបន់ (종량제 봉투) រួចបោះចោលនៅកន្លែងដែលបានកំណត់ ហើយមិនត្រូវបង្កការរំខានដល់អ្នកជិតខាងដោយសំឡេងខ្លាំងៗនៅពេលយប់ជ្រៅឡើយ។ ប្រសិនបើល្មើសនឹងច្បាប់ទាំងនេះ អាចនឹងរងទោសពីបទល្មើសស្រាល ឬត្រូវបង់ប្រាក់ពិន័យរដ្ឋបាល។\n\nQ13. តើចំណងជើងមួយណាដែលសមស្របបំផុតសម្រាប់អត្ថបទនេះ?",
+                options: [
+                    { ko: "① 한국 사회의 일상 속 기초질서", km: "សណ្ដាប់ធ្នាប់មូលដ្ឋានក្នុងជីវិតប្រចាំថ្ងៃនៃសង្គមកូរ៉េ", correct: true },
+                    { ko: "② 종량제 봉투의 가격과 종류", km: "តម្លៃ និងប្រភេទនៃថង់សម្រាម 종량제", correct: false },
+                    { ko: "③ 이웃 사촌 간의 갈등 해결법", km: "វិធីដោះស្រាយជម្លោះរវាងអ្នកជិតខាង", correct: false },
+                    { ko: "④ 강력 범죄의 예방과 대책", km: "ការបង្ការ និងវិធានការប្រឆាំងបទឧក្រិដ្ឋកម្មធ្ងន់ធ្ងរ", correct: false }
+                ],
+                explanation: "글 전체가 일상생활 속에서 지켜야 할 '기초질서(Basic public order)'의 예시와 위반 시 처벌에 대해 다루고 있으므로 ①번이 가장 적절합니다.\n\n[របៀបអាន៖ គី-ឆូ-ជិល-ស៊ូ]",
+                vocab: [["기초질서", "សណ្ដាប់ធ្នាប់មូលដ្ឋាន"], ["종량제 봉투", "ថង់សម្រាមបង់ថ្លៃតាមទំហំ"], ["소음", "សំឡេងរំខាន"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "Q14. 이 글의 내용과 다blocks른(틀린) 것은 무엇입니까?",
+                questionKm: "Q14. តើចម្លើយមួយណាដែល 'ខុស' (មិនស្រប) នឹងខ្លឹមសារអត្ថបទខាងលើ?",
+                options: [
+                    { ko: "① 쓰레기는 아무 봉투에나 담아서 버려도 된다.", km: "សម្រាម គឺអាចដាក់ក្នុងថង់ណាក៏បាន រួចបោះចោលទៅ។", correct: true },
+                    { ko: "② 기초질서를 위반하면 과태료를 낼 수 있다.", km: "បើល្មើសសណ្ដាប់ធ្នាប់មូលដ្ឋាន អាចនឹងត្រូវបង់ប្រាក់ពិន័យ 과태료។", correct: false },
+                    { ko: "③ 밤늦게 큰 소리를 내면 이웃에게 피해를 준다.", km: "ការធ្វើឱ្យមានសំឡេងខ្លាំងនៅពេលយប់ជ្រៅ គឺបង្កការរំខានដល់អ្នកជិតខាង។", correct: false },
+                    { ko: "④ 쓰레기는 정해진 장소에 버려야 한다.", km: "សម្រាមត្រូវតែបោះចោលនៅកន្លែងដែលបានកំណត់ទុក។", correct: false }
+                ],
+                explanation: "본문에 쓰레기는 '정해진 종량제 봉투에 넣어' 버려야 한다고 했으므로 아무 봉투에나 버려도 된다고 한 ①번이 틀린 내용으로 정답입니다.\n\n[របៀបអាន៖ អា-មូ ភុង-ធូ-អេ-ណា ប៊ូ-រ្យ៉ូ-ដូ ទ្វេន-ដា (ខុស)]",
+                vocab: [["과태료", "ប្រាក់ពិន័យរដ្ឋបាល"], ["피해", "ការខូចខាត/ផលប៉ះពាល់"], ["지정된 장소", "កន្លែងដែលបានកំណត់"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "다음 글을 읽고 빈칸에 들어갈 알맞은 វេយ្យាករណ៍을 고르십시오.\n\n법은 무조건 엄격하기만 한 것은 아니다. 법률 전문가가 아닌 일반 국민들도 생활 속 법률 정보를 (      ) 정부에서는 '찾기 쉬운 생활 법령 정보' 시스템을 구축하여 운영하고 있다.",
+                questionKm: "អានអត្ថបទខាងក្រោម រួចជ្រើសរើសវេយ្យាករណ៍ត្រឹមត្រូវដើម្បីបំពេញចន្លោះ។\n\nច្បាប់មិនមែនមានតែភាពម៉ឺងម៉ាត់តឹងរឹងនោះទេ។ ដើម្បីឱ្យប្រជាពលរដ្ឋទូទៅដែលមិនមែនជាអ្នកជំនាញច្បាប់ អាចស្វែងយល់ព័ត៌មានច្បាប់ក្នុងជីវភាពរស់នៅបានយ៉ាងងាយស្រួល (      ) រដ្ឋាភិបាលបានបង្កើត និងដំណើរការប្រព័ន្ធ 'ព័ត៌មានច្បាប់ជីវភាពងាយស្រួលស្វែងរក'។",
+                options: [
+                    { ko: "① 쉽게 확인하도록", km: "ដើម្បីឱ្យពិនិត្យមើលបានងាយស្រួល (-도록)", correct: true },
+                    { ko: "② 확인했다시피", km: "ដូចដែលបានពិនិត្យមើលរួច", correct: false },
+                    { ko: "③ 확인할 법이다", km: "តែងតែពិនិត្យមើលជាធម្មតា", correct: false },
+                    { ko: "④ 확인하는 한", km: "ឱ្យតែពិនិត្យមើល", correct: false }
+                ],
+                explanation: "정부가 시스템을 만든 목적을 나타내므로 목적이나 목표를 의미하는 '-도록(so that / in order to)'이 빈칸에 가장 알맞습니다.\n\n[របៀបអាន៖ ស៊ិប-កេ ហ្វាក់-អ៊ីន-ហា-ដូ-រុក]",
+                vocab: [["법령 정보", "ព័ត៌មានច្បាប់"], ["구축하다", "បង្កើតឡើង/រៀបចំ"], ["일반 국민", "ប្រជាពលរដ្ឋទូទៅ"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "다음 단어의 설명으로 알맞은 것을 고르십시오.\n\n[ 종량제 봉투 ]",
+                questionKm: "សូមជ្រើសរើសការពន្យល់ដែលត្រឹមត្រូវសម្រាប់ពាក្យខាងក្រោម៖\n\n[ 종량제 봉투 - ថង់សម្រាម 종량제 ]",
+                options: [
+                    { ko: "① 쓰레기의 양에 따라 비용을 내고 사용하는 지정된 봉투", km: "ថង់កំណត់ពិសេសដែលត្រូវទិញប្រើប្រាស់ទៅតាមបរិមាណសម្រាម", correct: true },
+                    { ko: "② 시장에서 물건을 담을 때 무료로 주는 비닐봉지", km: "ថង់ប្លាស្ទិកដែលគេផ្ដល់ជូនហ្វ្រីនៅពេលទិញអីវ៉ាន់នៅផ្សារ", correct: false },
+                    { ko: "③ 우편물을 보낼 때 사용하는 하얀색 봉투", km: "ថង់ឬស្រោមសំបុត្រពណ៌សដែលប្រើពេលផ្ញើប្រៃសណីយ៍", correct: false },
+                    { ko: "④ 은행에서 돈을 찾을 때 담아주는 돈 봉투", km: "ថង់ឬស្រោមសំបុត្រដែលធនាគារដាក់លុយឱ្យពេលដកប្រាក់", correct: false }
+                ],
+                explanation: "종량제 봉투는 쓰레기 배출량에 따라 수수료를 부과하기 위해 규격별로 제작하여 판매하는 쓰레기 봉투입니다.\n\n[របៀបអាន៖ ឆុង-រ្យ៉ាំង-ជេ ភុង-ធូ]",
+                vocab: [["비용", "ចំណាយ/តម្លៃ"], ["배출량", "បរិមាណបញ្ចេញចោល"], ["무료", "ឥតគិតថ្លៃ"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "다음 중 법을 지키지 않았을 때 발생하는 결과와 관련이 없는 단어는 무엇입니까?",
+                questionKm: "តើពាក្យមួយណាខាងក្រោម ដែល 'មិនពាក់ព័ន្ធ' ទៅនឹងលទ្ធផលកើតឡើងនៅពេលយើងមិនគោរពច្បាប់?",
+                options: [
+                    { ko: "① 포상", km: "ការផ្ដល់រង្វាន់ / លើកសរសើរ (លទ្ធផលល្អ)", correct: true },
+                    { ko: "② 벌금", km: "ប្រាក់ផាកពិន័យតុលាការ", correct: false },
+                    { ko: "③ 과태료", km: "ប្រាក់ពិន័យរដ្ឋបាល", correct: false },
+                    { ko: "④ 처벌", km: "ការដាក់ទោសទណ្ឌ", correct: false }
+                ],
+                explanation: "법을 위반하면 벌금, 과태료, 처벌 등을 받게 되지만, '포상(Reward/Prize)'은 훌륭한 일을 했을 때 주는 상이므로 관련이 없습니다.\n\n[របៀបអាន៖ ផូ-សាំង]",
+                vocab: [["포상", "ការរង្វាន់លើកទឹកចិត្ត"], ["위반", "ការល្មើសច្បាប់"], ["발생하다", "កើតឡើង"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "다음 대화의 빈칸에 가장 알맞은 단어를 고르십시오.\n\nA: 왜 진수 씨가 경찰서에 조사를 받으러 갔어요?\nB: 면허증 없이 운전을 하다가 (      )에 적발되었대요.",
+                questionKm: "សូមជ្រើសរើសពាក្យត្រឹមត្រូវដើម្បីបំពេញចន្លោះក្នុងកិច្ចសន្ទនា។\n\nA: ហេតុអ្វីបានជាលោក ជីនស៊ូ ទៅទទួលការស៊ើបអង្កេតនៅប៉ុស្តិ៍ប៉ូលីស?\nB: ឮថាគាត់បើកបរដោយគ្មានប័ណ្ណបើកបរ ក៏ត្រូវចាប់បានពីបទ (      )។",
+                options: [
+                    { ko: "① 무면허 운전", km: "ការបើកបរគ្មានប័ណ្ណបើកបរ (无证驾驶)", correct: true },
+                    { ko: "② 음주 운전", km: "ការបើកបរស្រវឹង", correct: false },
+                    { ko: "③ 신호 위반", km: "ការល្មើសភ្លើងសញ្ញាចរាចរណ៍", correct: false },
+                    { ko: "④ 불법 주차", km: "ការចតឡានខុសច្បាប់", correct: false }
+                ],
+                explanation: "면허증 없이 운전하는 행위를 명칭 그대로 '무면허 운전(Driving without a license)'이라고 합니다.\n\n[របៀបអាន៖ មូ-ម្យ៉ន់-ហរ វូន-ជន់]",
+                vocab: [["무면허", "គ្មានប័ណ្ណបើកបរ"], ["조사", "ការស៊ើបអង្កេត"], ["적발되다", "ត្រូវរកឃើញ/ចាប់បាន"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "다음 글이 설명하는 기관은 어디입니까?\n\n[ 법에 따라 재판을 진행하여 사람들 사이에 생긴 갈등을 해결하고, 법을 위반한 사람에게 벌을 주는 국가 기관 ]",
+                questionKm: "តើស្ថាប័នមួយណាដែលត្រូវបានពន្យល់នៅក្នុងអត្ថបទខាងក្រោម?\n\n[ ស្ថាប័នរដ្ឋដែលដំណើរការការកាត់ក្តីយោងទៅតាមច្បាប់ ដើម្បីដោះស្រាយជម្លោះដែលកើតមានឡើងរវាងមនុស្ស និងមនុស្ស ព្រមទាំងដាក់ទោសដល់អ្នកដែលល្មើសច្បាប់ ]",
+                options: [
+                    { ko: "① 법원", km: "តុលាការ (Court)", correct: true },
+                    { ko: "② 출입국외국인청", km: "នាយកដ្ឋានអន្តោប្រវេសន៍", correct: false },
+                    { ko: "③ 주민센터", km: "សាលាសង្កាត់", correct: false },
+                    { ko: "④ 경찰서", km: "ប៉ុស្តិ៍នគរបាល/ប៉ូលីស", correct: false }
+                ],
+                explanation: "재판을 통해 분쟁을 해결하고 처벌을 내리는 사법 국가 기관은 '법원(Court)'입니다.\n\n[របៀបអាន៖ ភុប-វ៉ុន]",
+                vocab: [["법원", "តុលាការ"], ["재판", "ការជំនុំជម្រះ/កាត់ក្តី"], ["갈등", "ជម្លោះ/ភាពរកាំរកូស"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "다음 빈칸에 알맞은 표현을 고르십시오.\n\n성실하게 일하는 사람이 성공하고, 남에게 피해를 주는 사람은 벌을 (      ) 사회적 정의다.",
+                questionKm: "សូមជ្រើសរើសជម្រើសត្រឹមត្រូវបំពេញចន្លោះ។\n\nមនុស្សដែលខិតខំធ្វើការងារដោយស្មោះត្រង់គង់តែនឹងជោគជ័យ ហើយមនុស្សដែលបង្កការខូចខាតដល់អ្នកដទៃតែងតែ (      ) នេះជាយុត្តិធម៌សង្គម។",
+                options: [
+                    { ko: "① 받는 법인 것이", km: "តែងតែទទួលបានជាធម្មតា (-는 법이다)", correct: true },
+                    { ko: "② 받다시피 하는 것이", km: "ស្ទើរតែទទួលបាន", correct: false },
+                    { ko: "③ 받도록 하는 것이", km: "ធ្វើឱ្យទទួលបាន", correct: false },
+                    { ko: "④ 받을 뿐인 것이", km: "គ្រាន់តែទទួលបានប៉ុណ្ណោះ", correct: false }
+                ],
+                explanation: "사회의 보편적 이치와 정의로운 당연한 규칙을 설명할 때는 '-는 법이다'가 가장 적합합니다.\n\n[របៀបអាន៖ បាន-នឺន ប៊ប-អ៊ីន គត-អ៊ី]",
+                vocab: [["사회적 정의", "យុត្តិធម៌សង្គម"], ["성실하게", "ដោយស្មោះត្រង់/ខិតខំ"], ["er벌", "ទោស"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "한국에서 길을 가다가 담배를 피울 때는 반드시 (      ) 구역인지 확인해야 합니다.",
+                questionKm: "នៅប្រទេសកូរ៉េ ពេលដើរតាមផ្លូវហើយចង់ជក់បារី ដាច់ខាតត្រូវតែពិនិត្យមើលជាមុនសិនថា តើវាជាតំបន់ (      ) ឬទេ។",
+                options: [
+                    { ko: "① 흡연", km: "ជក់បារី (흡연 구역 - តំបន់អនុញ្ញាតឱ្យជក់បារី)", correct: true },
+                    { ko: "② 금연", km: "ហាមជក់បារី (금연 구역 - បើជក់ត្រូវពិន័យ)", correct: false },
+                    { ko: "③ 주차", km: "ចតឡាន", correct: false },
+                    { ko: "④ 보호", km: "ការការពារ", correct: false }
+                ],
+                explanation: "담배를 피울 수 있게 지정된 장소는 '흡연 구역(Smoking area)'입니다. '금연 구역'에서 피우면 과태료가 부과됩니다.\n\n[របៀបអាន៖ ហឺប-យ៉ន់]",
+                vocab: [["흡연 구역", "តំបន់ជក់បារី"], ["금연 구역", "តំបន់ហាមជក់បារី"], ["확인하다", "ពិនិត្យផ្ទៀងផ្ទាត់"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "인터넷 익명성을 이용하여 타인을 비방하거나 허위 사실을 유포하는 것은 무슨 범죄입니까?",
+                questionKm: "ការប្រើប្រាស់គណនីលាក់ឈ្មោះលើអ៊ីនធឺណិតដើម្បីជេរប្រមាថអ្នកដទៃ ឬចែកចាយព័ត៌មានមិនពិត តើជាបទល្មើសប្រភេទណា?",
+                options: [
+                    { ko: "① 사이버 범죄", km: "បទល្មើសបច្ចេកវិទ្យា/ស៊ីប៊ែរ (Cybercrime)", correct: true },
+                    { ko: "② 강력 범죄", km: "បទឧក្រិដ្ឋកម្មធ្ងន់ធ្ងរ", correct: false },
+                    { ko: "③ 기초질서 위반", km: "ការល្មើសសណ្ដាប់ធ្នាប់មូលដ្ឋាន", correct: false },
+                    { ko: "④ 교통 범죄", km: "បទល្មើសចរាចរណ៍", correct: false }
+                ],
+                explanation: "인터넷이나 컴퓨터 공간(Cyber space)에서 일어나는 비방, 명예훼손 등은 '사이버 범죄'에 해당합니다.\n\n[របៀបអាន៖ សា-អ៊ី-ប៊រ ប៊ំ-ជ្វេ]",
+                vocab: [["사이버 범죄", "បទល្មើសតាមអ៊ីនធឺណិត"], ["허위 사실", "ការពិតក្លែងក្លាយ"], ["유포하다", "ចែកចាយ"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "다음 중 올바른 법질서 준수 행위를 한 사람은 누구입니까?",
+                questionKm: "តើនរណាជាអ្នកធ្វើសកម្មភាពគោរពច្បាប់ និងសណ្ដាប់ធ្នាប់បានត្រឹមត្រូវខាងក្រោម?",
+                options: [
+                    { ko: "① 민수: 횡단보도 신호가 빨간색일 때 건넜다.", km: "មីនស៊ូ៖ ឆ្លងផ្លូវពេលភ្លើងសញ្ញាថ្មើរជើងពណ៌ក្រហម។", correct: false },
+                    { ko: "② 수진: 쓰레기를 지정된 쓰레기통이 아닌 길가에 버렸다.", km: "ស៊ូជីន៖ បោះសម្រាមចោលតាមចិញ្ចើមផ្លូវ មិនដាក់ក្នុងធុងសម្រាម។", correct: false },
+                    { ko: "③ 타넷: 운전할 때 스마트폰을 사용하지 않고 앞을 잘 보았다.", km: "ថានេត៖ ពេលបើកបរមិនប្រើប្រាស់ទូរស័ព្ទដៃ និងមើលទៅមុខបានល្អ។", correct: true },
+                    { ko: "④ 영수: 늦은 밤에 아파트에서 큰 소리로 노래를 불렀다.", km: "យ៉ង់ស៊ូ៖ ច្រៀងចម្រៀងសំឡេងខ្លាំងៗនៅក្នុងអាផាតមិននៅពេលយប់ជ្រៅ។", correct: false },
+                ],
+                explanation: "운전 중 스마트폰 사용은 법률로 금지되어 있으므로, 사용하지 않고 전방을 주시한 타넷이 올바른 준수 행위를 했습니다.\n\n[របៀបអាន៖ ជូន-ស៊ូ ហេង-វី]",
+                vocab: [["올바른", "ដែលត្រឹមត្រូវ"], ["금지되다", "ត្រូវហាមឃាត់"], ["행위", "សកម្មភាព/ទង្វើ"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "법을 집행하고 국가 질서를 수호하는 경찰관의 지시를 따르지 않는 것은 (      )죄에 처해질 수 있다.",
+                questionKm: "ការមិនព្រមគោរពតាមការណែនាំរបស់មន្ត្រីនគរបាលដែលជាអ្នកអនុវត្តច្បាប់ និងការពារសណ្ដាប់ធ្នាប់រដ្ឋ អាចត្រូវរងទោសពីបទ (      )។",
+                options: [
+                    { ko: "① 공무집행방해", km: "ការរំខានដល់ការបំពេញការងារសាធារណៈ (妨碍公务)", correct: true },
+                    { ko: "② 무단 주차", km: "ការចតឡានផ្តេសផ្តាស", correct: false },
+                    { ko: "③ 경범죄 단순 위반", km: "ការល្មើសបទល្មើសស្រាលធម្មតា", correct: false },
+                    { ko: "④ 재산 침해", km: "ការរំលោភបំពានទ្រព្យសម្បត្តិ", correct: false }
+                ],
+                explanation: "정당한 공무를 수행 중인 공무원(경찰 등)에게 폭행이나 협박, 지시 불이행 등으로 방해하는 행위는 '공무집행방해죄'로 무겁게 처벌받습니다.\n\n[របៀបអាន៖ ខុង-មូ-ជីប-ហេង-បាំង-ហេ]",
+                vocab: [["공무집행방해", "ការរំខានការងាររដ្ឋ"], ["지시", "ការណែនាំ/បញ្ជា"], ["수행", "ការបំពេញ/អនុវត្ត"]]
+            },
+            {
+                section: "ការអានយល់ន័យ",
+                questionKo: "국가에서 법을 제정할 때 가장 기본이 되며, 국민의 기본권을 보장하는 최고 법은 무엇입니까?",
+                questionKm: "តើច្បាប់កំពូលរបស់ជាតិដែលជាមូលដ្ឋានគ្រឹះក្នុងការបង្កើតច្បាប់ផ្សេងៗ និងធានាសិទ្ធិជាមូលដ្ឋានរបស់ប្រជាពលរដ្ឋគឺជាច្បាប់អ្វី?",
+                options: [
+                    { ko: "① 헌법", km: "រដ្ឋធម្មនុញ្ញ (Constitution)", correct: true },
+                    { ko: "② 형법", km: "ក្រមព្រហ្មទណ្ឌ", correct: false },
+                    { ko: "③ 민법", km: "ក្រមរដ្ឋប្បវេណី", correct: false },
+                    { ko: "④ 도로교통법", km: "ច្បាប់ចរាចរណ៍ផ្លូវគោក", correct: false }
+                ],
+                explanation: "국가의 최고 법이자 다른 모든 법률의 기준이 되는 법은 '헌법(Constitution)'입니다.\n\n[របៀបអាន៖ ហុន-ប៊ប]",
+                vocab: [["헌법", "រដ្ឋធម្មនុញ្ញ"], ["최고 법", "ច្បាប់កំពូល"], ["기본권", "សិទ្ធិជាមូលដ្ឋាន"]]
+            },
+
+            // PART 3: Culture & Korean Society (Q26 - Q30)
+            {
+                section: "វប្បធម៌ និងចំណេះដឹងសង្គម",
+                questionKo: "한국 정부가 운영하는 과학적이고 편리한 생활 법령 정보 시스템의 이름은 무엇입니까?",
+                questionKm: "តើប្រព័ន្ធព័ត៌មានច្បាប់ជីវភាពដ៏ងាយស្រួល និងបែបវិទ្យាសាស្ត្រដែលដំណើរការដោយរដ្ឋាភិបាលកូរ៉េ មានឈ្មោះថាអ្វី?",
+                options: [
+                    { ko: "① 찾기 쉬운 생활 법령 정보", km: "ព័ត៌មានច្បាប់ជីវភាពងាយស្រួលស្វែងរក (Easy Law)", correct: true },
+                    { ko: "② 종합국적정보시스템", km: "ប្រព័ន្ធព័ត៌មានសញ្ជាតិទូទៅ", correct: false },
+                    { ko: "③ 외국인 종합안내센터", km: "មជ្ឈមណ្ឌលណែនាំទូទៅសម្រាប់ជនបរទេស", correct: false },
+                    { ko: "④ 대한민국 법원 경매", km: "ការដេញថ្លៃរបស់តុលាការនៃសាធារណរដ្ឋកូរ៉េ", correct: false }
+                ],
+                explanation: "정부(법제처)에서는 일반 국민이 실생활에 필요한 법을 쉽게 이해할 수 있도록 '찾기 쉬운 생활 법령 정보' වෙ็บไซต์을 운영하고 있습니다.\n\n[របៀបអាន៖ ឆាត់-គី ស៊ិប-វូន សេង់-ហ្វាល ភុប-រ្យ៉ង់ ឆុង-បូ]",
+                vocab: [["찾기 쉬운", "ងាយស្រួលស្វែងរក"], ["생활 법령", "ច្បាប់បទដ្ឋានជីវភាព"], ["운영", "ការដំណើរការ"]]
+            },
+            {
+                section: "វប្បធម៌ និងចំណេះដឹងសង្គម",
+                questionKo: "'찾기 쉬운 생활 법령 정보' 시스템에 대한 설명으로 옳은 것은 무엇입니까?",
+                questionKm: "តើការពិពណ៌នាមួយណាដែល 'ត្រឹមត្រូវ' អំពីប្រព័ន្ធ 'ព័ត៌មានច្បាប់ជីវភាពងាយស្រួលស្វែងរក'?",
+                options: [
+                    { ko: "① 반드시 법률 전문가들만 가입하고 이용할 수 있다.", km: "ដាច់ខាតមានតែអ្នកជំនាញច្បាប់ប៉ុណ្ណោះ ទើបអាចចូលរួមប្រើប្រាស់បាន។", correct: false },
+                    { ko: "② 일상생활에 필요한 법률들을 주제별로 쉽게 정리해 둔다.", km: "វាបានរៀបចំចងក្រងច្បាប់ដែលចាំបាច់ក្នុងជីវិតប្រចាំថ្ងៃទៅតាមប្រធានបទយ៉ាងងាយស្រួល។", correct: true },
+                    { ko: "③ 재판 결과에 불만이 있을 때 항소하는 사이트이다.", km: "វាជាគេហទំព័រសម្រាប់ប្តឹងឧទ្ធរណ៍នៅពេលមិនពេញចិត្តនឹងលទ្ធផលកាត់ក្តី។", correct: false },
+                    { ko: "④ 한국어 서비스만 제공하므로 외국인은 볼 수 없다.", km: "វាផ្តល់តែសេវាកម្មភាសាកូរ៉េប៉ុណ្ណោះ ដូច្នេះជនបរទេសមិនអាចមើលបានទេ។", correct: false }
+                ],
+                explanation: "이 시스템은 국적, 결혼, 취업 등 일상생활과 밀접한 법률을 알기 쉽게 정리해 주며, 외국인을 위한 다국어 서비스도 일부 제공합니다.\n\n[របៀបអាន៖ ជូ-ជេ-ប្យល-រ៉ូ ស៊ិប-កេ ជូន-រី]",
+                vocab: [["주제별", "តាមប្រធានបទ"], ["일상생활", "ជីវិតប្រចាំថ្ងៃ"], ["제공", "ការផ្តល់ជូន"]]
+            },
+            {
+                section: "វប្បធម៌ និងចំណេះដឹងសង្គម",
+                questionKo: "외국인 주민이 한국에서 임금 체불이나 부당해고 등 법적 문제가 생겼을 때 도움을 받을 수 있는 종합 상담 전화번호는?",
+                questionKm: "តើលេខទូរស័ព្ទទំនាក់ទំនងពិគ្រោះយោបល់ទូទៅសម្រាប់ប្រជាពលរដ្ឋបរទេសនៅពេលមានបញ្ហាច្បាប់ដូចជា ការមិនបើកប្រាក់ខែ ឬការបញ្ឈប់ពីការងារដោយអយុត្តិធម៌គឺលេខប៉ុន្មាន?",
+                options: [
+                    { ko: "① 1345", km: "១៣៤៥ (មជ្ឈមណ្ឌលណែនាំទូទៅសម្រាប់ជនបរទេស)", correct: true },
+                    { ko: "② 112", km: "១១២ (លេខសង្គ្រោះបន្ទាន់ប៉ូលីស)", correct: false },
+                    { ko: "③ 119", km: "១១៩ (លេខឡានទឹក/ឡានពេទ្យសង្គ្រោះ)", correct: false },
+                    { ko: "④ 1350", km: "១៣៥០ (លេខពិគ្រោះយោបល់ក្រសួងការងារ - ភាសាកូរ៉េចម្បង)", correct: false }
+                ],
+                options_correct_index: 0,
+                explanation: "법무부 출입국외국인청이 운영하는 1345 종합안내센터에서는 외국인을 위한 다양한 언어로 체류 및 기본 법률 상담을 연계해 줍니다.\n\n[របៀបអាន៖ អ៊ីល-សាម-សា-អូ]",
+                vocab: [["임금 체불", "ការមិនបើកប្រាក់ខែ"], ["부당해고", "ការបញ្ឈប់ពីការងារអយុត្តិធម៌"], ["상담", "ការពិគ្រោះយោបល់"]]
+            },
+            {
+                section: "វប្បធម៌ និងចំណេះដឹងសង្គម",
+                questionKo: "한국 사회에서 준법정신을 가져야 하는 이유로 가장 거리가 먼 것은?",
+                questionKm: "តើមួយណាជាជម្រើសដែល 'ឆ្ងាយជាងគេ' (មិនមែនជាហេតុផល) ក្នុងការមានស្មារតីគោរពច្បាប់ (준법정신) ក្នុងសង្គមកូរ៉េ?",
+                options: [
+                    { ko: "① 개인의 자유를 억압하고 통제하기 위해서", km: "ដើម្បីជិះជាន់ និងគ្រប់គ្រងសេរីភាពបុគ្គល (ខុស)", correct: true },
+                    { ko: "② 사회 구성원의 안전을 보호하기 위해서", km: "ដើម្បីការពារសុវត្ថិភាពរបស់សមាជិកសង្គម", correct: false },
+                    { ko: "③ 평화롭고 질서 있는 사회를 유지하기 위해서", km: "ដើម្បីរក្សាសង្គមមួយដែលមានសណ្ដាប់ធ្នាប់ និងសន្តិភាព", correct: false },
+                    { ko: "④ 사람들 간의 갈등을 공정하게 해결하기 위해서", km: "ដើម្បីដោះស្រាយជម្លោះរវាងមនុស្ស និងមនុស្សដោយยุត្តិធម៌", correct: false }
+                ],
+                explanation: "법은 개인의 자유를 억압하는 것이 아니라, 오히려 타인으로부터 내 자유와 권리를 보호하기 위해 존재합니다. 따라서 ①번은 잘못된 설명입니다.\n\n[របៀបអាន៖ អក-អាប់-ហា-គោ ធុង-ជេ-ហា-គី វី-ហេ (មិនមែនជាគោលបំណងច្បាប់ទេ)]",
+                vocab: [["준법정신", "ស្មារតីគោរពច្បាប់"], ["억압하다", "សង្កត់សង្កិន/ជិះជាន់"], ["공정하게", "ដោយយុត្តិធម៌/ត្រឹមត្រូវ"]]
+            },
+            {
+                section: "វប្បធម៌ និងចំណេះដឹងសង្គម",
+                questionKo: "다음 중 한국의 법률 구조 기관으로, 경제적으로 어렵거나 법을 잘 모르는 사람에게 무료 법률 상담을 제공하는 곳은 어디입니까?",
+                questionKm: "តើស្ថាប័នសង្គ្រោះច្បាប់របស់កូរ៉េមួយណា ដែលផ្តល់ការពិគ្រោះយោបល់ច្បាប់ដោយឥតគិតថ្លៃដល់អ្នកដែលមានជីវភាពខ្សត់ខ្សោយ ឬមិនសូវយល់ដឹងពីច្បាប់?",
+                options: [
+                    { ko: "① 대한법률구조공단", km: "សាជីវកម្មសង្គ្រោះច្បាប់កូរ៉េ (KLAC)", correct: true },
+                    { ko: "② 한국소비자원", km: "វិទ្យាស្ថានអ្នកប្រើប្រាស់កូរ៉េ", correct: false },
+                    { ko: "③ 근로복지공단", km: "សាជីវកម្មសុខុមាលភាពពលកម្ម", correct: false },
+                    { ko: "④ 국가인권위원회", km: "គណៈកម្មាធិការសិទ្ធិមនុស្សជាតិ", correct: false }
+                ],
+                explanation: "경제적 취약계층 등에게 법률적 도움과 무료 상담, 소송 대리 등을 지원하는 대표적 기관은 '대한법률구조공단'입니다.\n\n[របៀបអាន៖ ធេ-ហាន់-ភុប-រ្យ៉ង់-គូ-ចូ-គុង-ដាន់]",
+                vocab: [["법률 구조", "ការសង្គ្រោះច្បាប់"], ["무료 법률 상담", "ការពិគ្រោះច្បាប់ហ្វ្រី"], ["취약계층", "ក្រុមមនុស្សងាយរងគ្រោះ"]]
+            }
+        ];
+
+        // QUIF MANAGER STATE LOGIC
+        const quizManager = {
+            currentIndex: 0,
+            score: 0,
+            isAnswered: false,
+            active5050: false,
+            reviewMode: false,
+
+            start() {
+                document.getElementById('start-screen').classList.add('hidden');
+                document.getElementById('result-screen').classList.add('hidden');
+                document.getElementById('quiz-screen').classList.remove('hidden');
+                this.currentIndex = 0;
+                this.score = 0;
+                this.reviewMode = false;
+                this.loadQuestion();
+            },
+
+            loadQuestion() {
+                this.isAnswered = false;
+                this.active5050 = false;
+                audioEngine.stop();
+
+                const currentQuestion = quizData[this.currentIndex];
+
+                // Update Progress UI
+                document.getElementById('question-number').innerText = `សំណួរទី ${this.currentIndex + 1}/${quizData.length}`;
+                document.getElementById('score-display').innerText = `ពិន្ទុ: ${this.score}`;
+                const progressPercent = ((this.currentIndex) / quizData.length) * 100;
+                document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+                // Set Section Tag
+                document.getElementById('section-tag').innerText = currentQuestion.section;
+
+                // Load Text - Korean is visible, Khmer hidden initially
+                document.getElementById('question-text-ko').innerText = currentQuestion.questionKo;
+                document.getElementById('question-text-km').innerText = currentQuestion.questionKm;
+                document.getElementById('question-text-km').classList.add('hidden');
+
+                // Reset Cards and Buttons
+                document.getElementById('explanation-card').classList.add('hidden');
+                document.getElementById('next-btn').classList.add('hidden');
+
+                // Re-enable powerup states visually
+                document.getElementById('powerup-5050').disabled = false;
+                document.getElementById('powerup-5050').opacity = "1";
+
+                // Render Options
+                this.renderOptions();
+            },
+
+            renderOptions() {
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                const currentQuestion = quizData[this.currentIndex];
+
+                currentQuestion.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left card-bg p-4 rounded-xl border border-gray-800 transition active:scale-[0.99] flex flex-col gap-1 cursor-pointer hover:border-gray-600";
+                    btn.id = `opt-${idx}`;
+                    
+                    // Korean text
+                    const koSpan = document.createElement('span');
+                    koSpan.className = "text-sm font-medium text-white";
+                    koSpan.innerText = opt.ko;
+                    btn.appendChild(koSpan);
+
+                    // Khmer translation holder (hidden at startup unless translated)
+                    const kmSpan = document.createElement('span');
+                    kmSpan.className = "text-xs text-[#94A3B8] hidden mt-1 border-t border-gray-900 pt-1";
+                    kmSpan.id = `opt-km-${idx}`;
+                    kmSpan.innerText = opt.km;
+                    btn.appendChild(kmSpan);
+
+                    // Click handler
+                    btn.onclick = () => this.checkAnswer(idx);
+
+                    container.appendChild(btn);
+                });
+
+                if (this.reviewMode) {
+                    this.revealEverything();
+                    // Highlights correct one in review mode
+                    currentQuestion.options.forEach((opt, idx) => {
+                        const target = document.getElementById(`opt-${idx}`);
+                        if (opt.correct) {
+                            target.className = "w-full text-left p-4 rounded-xl border-2 border-[#10B981] bg-emerald-950/20 flex flex-col gap-1";
+                        }
+                    });
+                    document.getElementById('next-btn').classList.remove('hidden');
+                }
+            },
+
+            toggleTTS() {
+                const currentQuestion = quizData[this.currentIndex];
+                audioEngine.toggle(currentQuestion.questionKo, currentQuestion.questionKm);
+            },
+
+            use5050() {
+                if (this.isAnswered || this.active5050 || this.reviewMode) return;
+                this.active5050 = true;
+                document.getElementById('powerup-5050').disabled = true;
+
+                const currentQuestion = quizData[this.currentIndex];
+                let wrongIndices = [];
+                currentQuestion.options.forEach((opt, idx) => {
+                    if (!opt.correct) wrongIndices.push(idx);
+                });
+
+                // Pick 2 random wrong ones to eliminate
+                wrongIndices.sort(() => 0.5 - Math.random());
+                document.getElementById(`opt-${wrongIndices[0]}`).style.visibility = 'hidden';
+                document.getElementById(`opt-${wrongIndices[1]}`).style.visibility = 'hidden';
+            },
+
+            translateQuestion() {
+                document.getElementById('question-text-km').classList.remove('hidden');
+            },
+
+            translateAnswers() {
+                const currentQuestion = quizData[this.currentIndex];
+                currentQuestion.options.forEach((opt, idx) => {
+                    const el = document.getElementById(`opt-km-${idx}`);
+                    if (el) el.classList.remove('hidden');
+                });
+            },
+
+            checkAnswer(selectedIndex) {
+                if (this.isAnswered || this.reviewMode) return;
+                this.isAnswered = true;
+                audioEngine.stop();
+
+                const currentQuestion = quizData[this.currentIndex];
+                const selectedOption = currentQuestion.options[selectedIndex];
+                const selectedBtn = document.getElementById(`opt-${selectedIndex}`);
+
+                if (selectedOption.correct) {
+                    selectedBtn.className = "w-full text-left p-4 rounded-xl border-2 border-[#10B981] bg-emerald-950/30 flex flex-col gap-1";
+                    this.score++;
+                    document.getElementById('score-display').innerText = `ពិន្ទុ: ${this.score}`;
+                    document.getElementById('feedback-title').innerText = "✓ ត្រឹមត្រូវ (Correct)";
+                    document.getElementById('feedback-title').className = "font-bold text-md text-[#10B981] mb-2";
+                } else {
+                    selectedBtn.className = "w-full text-left p-4 rounded-xl border-2 border-[#EF4444] bg-rose-950/30 flex flex-col gap-1";
+                    document.getElementById('feedback-title').innerText = "✕ មិនត្រឹមត្រូវ (Incorrect)";
+                    document.getElementById('feedback-title').className = "font-bold text-md text-[#EF4444] mb-2";
+                    
+                    // Highlight the correct one
+                    currentQuestion.options.forEach((opt, idx) => {
+                        if (opt.correct) {
+                            document.getElementById(`opt-${idx}`).className = "w-full text-left p-4 rounded-xl border-2 border-[#10B981] bg-emerald-950/10 flex flex-col gap-1";
+                        }
+                    });
+                }
+
+                this.revealEverything();
+            },
+
+            revealEverything() {
+                const currentQuestion = quizData[this.currentIndex];
+
+                // Auto reveal question and answer translations
+                this.translateQuestion();
+                this.translateAnswers();
+
+                // Setup explanation card
+                document.getElementById('explanation-text-km').innerText = currentQuestion.explanation;
+                
+                // Setup vocab breakdown list
+                const vocabUl = document.getElementById('vocab-list');
+                vocabUl.innerHTML = '';
+                currentQuestion.vocab.forEach(pair => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<b class="text-white">${pair[0]}</b>: ${pair[1]}`;
+                    vocabUl.appendChild(li);
+                });
+
+                document.getElementById('explanation-card').classList.remove('hidden');
+                document.getElementById('next-btn').classList.remove('hidden');
+            },
+
+            next() {
+                this.currentIndex++;
+                if (this.currentIndex < quizData.length) {
+                    this.loadQuestion();
+                } else {
+                    this.showResults();
+                }
+            },
+
+            showResults() {
+                audioEngine.stop();
+                document.getElementById('quiz-screen').classList.add('hidden');
+                document.getElementById('result-screen').classList.remove('hidden');
+
+                document.getElementById('final-score').innerText = `${this.score} / ${quizData.length}`;
+                
+                const percent = (this.score / quizData.length) * 100;
+                let msg = "";
+                if (percent >= 80) {
+                    msg = "អស្ចារ្យមែនទែន! អ្នកបានយល់ដឹងខ្លឹមសារច្បាប់ និងសណ្ដាប់ធ្នាប់យ៉ាងច្បាស់លាស់។ ប្រាកដជាប្រឡងជាប់ 중간평가 មិនខាន!";
+                } else if (percent >= 50) {
+                    msg = "លទ្ធផលល្អបង្គួរ! អ្នកអាចធ្វើការរំលឹកបន្ថែមលើផ្នែកវេយ្យាករណ៍ និងពាក្យសព្ទវប្បធម៌ ដើម្បីទទួលបានពិន្ទុខ្ពស់ជាងនេះ។";
+                } else {
+                    msg = "សូមព្យាយាមឡើងវិញ! មេរៀនច្បាប់នេះមានពាក្យបច្ចេកទេសច្រើន ដូច្នេះការធ្វើតេស្តឡើងវិញនឹងជួយឱ្យអ្នកចំណាំបានកាន់តែល្អ។";
+                }
+                document.getElementById('result-message').innerText = msg;
+            },
+
+            restart() {
+                this.start();
+            },
+
+            activateReviewMode() {
+                this.reviewMode = true;
+                this.currentIndex = 0;
+                document.getElementById('result-screen').classList.add('hidden');
+                document.getElementById('quiz-screen').classList.remove('hidden');
+                this.loadQuestion();
+            }
+        };
+
+        // Initialize state on render completion
+        window.onload = () => {
+            // Ready to listen or accept Android environment values if packaged inside WebView
+            console.log("KIIP Level 4 Lesson 15 Ready.");
+        };
+    </script>
+</body>
+</html>
