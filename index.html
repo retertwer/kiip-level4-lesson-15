@@ -1,1271 +1,1288 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="km">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>KIIP Level 4 · Lesson 15 Quiz</title>
-    <style>
-        /* ── CSS Variables (Android Theme Sync) ── */
-        :root {
-            --primary-color: #FFC107;
-            --bg-color: #0A0E1A;
-            --text-color: #FFFFFF;
-            --card-bg: rgba(255, 255, 255, 0.06);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --text-secondary: #94A3B8;
-            --correct: #10B981;
-            --incorrect: #EF4444;
-            --radius: 12px;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            --transition: 0.25s ease;
-            --font-base: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-base);
-            min-height: 100vh;
-            padding: 16px 12px 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: background var(--transition), color var(--transition);
-            line-height: 1.5;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 680px;
-            margin: 0 auto;
-        }
-
-        /* ── Header ── */
-        .quiz-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px 12px;
-            margin-bottom: 20px;
-            padding: 12px 16px;
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        .quiz-header .title-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .quiz-header .title-group h1 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            color: var(--text-color);
-        }
-
-        .quiz-header .title-group .badge {
-            background: var(--primary-color);
-            color: #0A0E1A;
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 2px 10px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        .score-display {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--primary-color);
-            background: rgba(255, 193, 7, 0.12);
-            padding: 4px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 193, 7, 0.2);
-        }
-
-        /* ── Progress ── */
-        .progress-track {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .progress-track .fill {
-            height: 100%;
-            background: var(--primary-color);
-            border-radius: 4px;
-            transition: width 0.4s ease;
-            width: 0%;
-        }
-
-        /* ── Card ── */
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            border: 1px solid var(--card-border);
-            padding: 20px 18px;
-            margin-bottom: 18px;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            box-shadow: var(--shadow);
-            transition: background var(--transition), border var(--transition);
-        }
-
-        .card .q-number {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            letter-spacing: 0.5px;
-            background: rgba(255, 193, 7, 0.10);
-            display: inline-block;
-            padding: 2px 12px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-        }
-
-        .card .q-text {
-            font-size: 1.05rem;
-            font-weight: 500;
-            line-height: 1.6;
-            margin-bottom: 6px;
-            word-break: break-word;
-        }
-
-        .card .q-translation {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            border-left: 3px solid var(--primary-color);
-            padding-left: 12px;
-            margin-top: 4px;
-            margin-bottom: 14px;
-            display: none;
-        }
-
-        .card .q-translation.show {
-            display: block;
-        }
-
-        /* ── Options ── */
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 4px;
-        }
-
-        .option-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            min-height: 52px;
-            padding: 10px 16px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1.5px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius);
-            color: var(--text-color);
-            font-size: 0.95rem;
-            font-weight: 400;
-            text-align: left;
-            cursor: pointer;
-            transition: background 0.2s, border 0.2s, transform 0.1s;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            touch-action: manipulation;
-            word-break: break-word;
-        }
-
-        .option-btn .letter {
-            flex-shrink: 0;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.06);
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            transition: background 0.2s, color 0.2s;
-        }
-
-        .option-btn .opt-translation {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-left: auto;
-            padding-left: 8px;
-            opacity: 0.7;
-            display: none;
-        }
-
-        .option-btn .opt-translation.show {
-            display: inline;
-        }
-
-        .option-btn:active {
-            transform: scale(0.97);
-        }
-
-        .option-btn:hover:not(.disabled) {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .option-btn.correct {
-            border-color: var(--correct) !important;
-            background: rgba(16, 185, 129, 0.18) !important;
-        }
-        .option-btn.correct .letter {
-            background: var(--correct);
-            color: #fff;
-        }
-
-        .option-btn.wrong {
-            border-color: var(--incorrect) !important;
-            background: rgba(239, 68, 68, 0.18) !important;
-        }
-        .option-btn.wrong .letter {
-            background: var(--incorrect);
-            color: #fff;
-        }
-
-        .option-btn.disabled {
-            cursor: default;
-            opacity: 0.7;
-        }
-        .option-btn.disabled:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(255, 255, 255, 0.08);
-        }
-        .option-btn.reveal-correct {
-            border-color: var(--correct) !important;
-            background: rgba(16, 185, 129, 0.10) !important;
-        }
-
-        /* ── Feedback ── */
-        .feedback-box {
-            margin-top: 14px;
-            padding: 12px 16px;
-            border-radius: var(--radius);
-            font-size: 0.92rem;
-            display: none;
-            line-height: 1.5;
-            border-left: 4px solid transparent;
-        }
-
-        .feedback-box.show {
-            display: block;
-        }
-        .feedback-box.correct {
-            background: rgba(16, 185, 129, 0.12);
-            border-color: var(--correct);
-            color: #6ee7b7;
-        }
-        .feedback-box.wrong {
-            background: rgba(239, 68, 68, 0.12);
-            border-color: var(--incorrect);
-            color: #fca5a5;
-        }
-
-        .feedback-box .fb-trans {
-            margin-top: 6px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            padding-top: 6px;
-        }
-
-        /* ── Power-ups & Controls ── */
-        .powerup-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 16px 0 6px;
-        }
-
-        .powerup-bar button {
-            flex: 1 1 auto;
-            min-height: 44px;
-            padding: 6px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            border-radius: var(--radius);
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text-color);
-            font-size: 0.78rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s, border 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-        }
-
-        .powerup-bar button:active {
-            transform: scale(0.96);
-        }
-        .powerup-bar button:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .powerup-bar button:not(:disabled):hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.18);
-        }
-
-        .powerup-bar .icon {
-            font-size: 1rem;
-        }
-
-        /* ── Navigation ── */
-        .nav-row {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .nav-row button {
-            flex: 1;
-            min-height: 52px;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            letter-spacing: 0.3px;
-        }
-
-        .nav-row button:active {
-            transform: scale(0.96);
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: #0A0E1A;
-        }
-        .btn-primary:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .btn-primary:not(:disabled):hover {
-            filter: brightness(1.08);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--text-color);
-            border: 1.5px solid rgba(255, 255, 255, 0.15);
-        }
-        .btn-outline:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        /* ── Results ── */
-        .result-box {
-            text-align: center;
-            padding: 30px 18px 24px;
-        }
-
-        .result-box .score-big {
-            font-size: 3.2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            line-height: 1.2;
-        }
-
-        .result-box .score-label {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        .result-box .result-msg {
-            margin: 16px 0 20px;
-            font-size: 1.05rem;
-        }
-
-        .result-box .review-toggle {
-            margin: 12px 0 8px;
-        }
-
-        .review-list {
-            margin-top: 18px;
-            text-align: left;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            padding-top: 16px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .review-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 0.85rem;
-        }
-
-        .review-item .r-icon {
-            flex-shrink: 0;
-            font-size: 1.1rem;
-            margin-top: 1px;
-        }
-        .review-item .r-text {
-            flex: 1;
-        }
-        .review-item .r-answer {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-
-        /* ── Hidden / Utility ── */
-        .hidden {
-            display: none !important;
-        }
-
-        .mt-4 {
-            margin-top: 16px;
-        }
-        .mt-2 {
-            margin-top: 8px;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .gap-2 {
-            gap: 8px;
-        }
-        .flex-wrap {
-            flex-wrap: wrap;
-        }
-        .items-center {
-            align-items: center;
-        }
-
-        /* ── Scrollbar ── */
-        .review-list::-webkit-scrollbar {
-            width: 4px;
-        }
-        .review-list::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .review-list::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-        }
-
-        /* ── Responsive ── */
-        @media (max-width: 480px) {
-            body {
-                padding: 10px 8px 30px;
-            }
-            .card {
-                padding: 16px 14px;
-            }
-            .card .q-text {
-                font-size: 0.95rem;
-            }
-            .option-btn {
-                font-size: 0.88rem;
-                min-height: 48px;
-                padding: 8px 14px;
-            }
-            .powerup-bar button {
-                font-size: 0.7rem;
-                min-height: 38px;
-                padding: 4px 10px;
-                white-space: normal;
-            }
-            .nav-row button {
-                min-height: 48px;
-                font-size: 0.9rem;
-            }
-            .quiz-header .title-group h1 {
-                font-size: 0.95rem;
-            }
-            .result-box .score-big {
-                font-size: 2.6rem;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .powerup-bar button {
-                font-size: 0.6rem;
-                padding: 4px 8px;
-            }
-            .option-btn {
-                font-size: 0.82rem;
-                padding: 6px 12px;
-                min-height: 44px;
-            }
-        }
-
-        /* ── Speech button inline ── */
-        .speech-trigger {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 8px;
-            transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .speech-trigger:hover {
-            background: rgba(255, 255, 255, 0.06);
-        }
-        .speech-trigger:active {
-            transform: scale(0.92);
-        }
-
-        .q-header-row {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 8px;
-        }
-        .q-header-row .q-left {
-            flex: 1;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KIIP Level 4 - Lesson 15 법과 질서</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg:#0A0E1A;
+      --card:#161B2E;
+      --primary:#FFC107;
+      --correct:#10B981;
+      --incorrect:#EF4444;
+      --muted:#94A3B8;
+    }
+    body{
+      background:var(--bg);
+      color:#fff;
+      font-family: "Noto Sans Khmer","Khmer OS System","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    }
+    .card-bg{ background:var(--card); }
+    .text-muted{ color:var(--muted); }
+    .btn-primary{
+      background:var(--primary);
+      color:#111827;
+      font-weight:700;
+    }
+    .btn-primary:hover{ filter:brightness(1.05); }
+    .btn-secondary{
+      background:#24304d;
+      color:#fff;
+      border:1px solid #334155;
+    }
+    .btn-secondary:hover{ background:#2c3b61; }
+    .option-btn{
+      background:#1c2540;
+      border:1px solid #334155;
+      transition: all .2s ease;
+    }
+    .option-btn:hover{ background:#263251; transform:translateY(-1px); }
+    .correct{ background:rgba(16,185,129,.18)!important; border-color:var(--correct)!important; }
+    .incorrect{ background:rgba(239,68,68,.18)!important; border-color:var(--incorrect)!important; }
+    .disabled-option{ opacity:.45; pointer-events:none; }
+    .speaker-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:32px;height:32px;
+      border-radius:9999px;
+      background:#22304e;
+      border:1px solid #3b4c72;
+      color:#fff;
+      font-size:16px;
+      margin-left:6px;
+    }
+    .speaker-btn:hover{ background:#2a3b61; }
+    .badge{
+      background:#27324d;
+      color:#fff;
+      border:1px solid #374151;
+    }
+    .power-used{
+      opacity:.45;
+      pointer-events:none;
+      filter:grayscale(20%);
+    }
+    .explain-box{
+      background:#101728;
+      border:1px solid #27324d;
+    }
+    .hidden-soft{ display:none; }
+    .review-item{ border-bottom:1px solid #263251; }
+    .sticky-top{ position:sticky; top:0; z-index:30; backdrop-filter: blur(8px); }
+  </style>
 </head>
-<body>
-
-    <div class="app-container" id="app">
-
-        <!-- Header -->
-        <header class="quiz-header">
-            <div class="title-group">
-                <h1>📘 KIIP Lv.4</h1>
-                <span class="badge">15과</span>
-            </div>
-            <div class="score-display" id="scoreDisplay">0 / 30</div>
-        </header>
-
-        <!-- Progress -->
-        <div class="progress-track">
-            <div class="fill" id="progressFill"></div>
+<body class="min-h-screen">
+  <div class="max-w-5xl mx-auto px-4 py-6">
+    <div class="sticky-top bg-[#0A0E1A]/90 border-b border-slate-800 mb-6">
+      <div class="py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-yellow-400">KIIP Level 4 - Lesson 15</h1>
+          <p class="text-lg text-white">법과 질서</p>
+          <p class="text-sm text-slate-400">ពាក្យសព្ទ p.203 | វេយ្យាករណ៍: -다시피, -는 법이다 | វប្បធម៌ p.202 찾기 쉬운 생활 법령 정보</p>
         </div>
-
-        <!-- Main Quiz Area -->
-        <div id="quizArea">
-            <!-- Rendered by JS -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span id="lessonBadge" class="badge px-3 py-1 rounded-full text-sm">Level 4 · Lesson 15</span>
+          <span id="progressBadge" class="badge px-3 py-1 rounded-full text-sm">0 / 30</span>
+          <span id="scoreBadge" class="badge px-3 py-1 rounded-full text-sm text-yellow-400 font-bold">Score: 0</span>
         </div>
-
-        <!-- Footer / Credit -->
-        <div style="text-align:center;margin-top:24px;font-size:0.7rem;color:var(--text-secondary);opacity:0.5;letter-spacing:0.3px;">
-            KIIP Level 4 · 법과 질서 · 30문항
-        </div>
+      </div>
     </div>
 
-    <script>
-        // ═══════════════════════════════════════════════════
-        //  QUIZ DATA — Lesson 15: 법과 질서
-        //  Vocabulary (p.203) + Grammar (-다시피, -는 법이다)
-        //  Reading: 법과 질서 (경범죄, 5대 범죄, 교통 법규)
-        //  Culture: 찾기 쉬운 생활 법령 정보 (p.202)
-        // ═══════════════════════════════════════════════════
+    <div id="app" class="card-bg rounded-2xl shadow-2xl border border-slate-800 overflow-hidden">
+      <div id="startScreen" class="p-6 md:p-8">
+        <div class="grid md:grid-cols-2 gap-6 items-start">
+          <div>
+            <h2 class="text-2xl font-bold mb-3">ស្វាគមន៍មកកាន់កម្មវិធីតេស្តសាកល្បង</h2>
+            <p class="text-slate-300 leading-7 mb-4">
+              វិញ្ញាសានេះត្រូវបានរចនាឡើងសម្រាប់ KIIP កម្រិត 4 មេរៀនទី 15 <b>법과 질서</b>។
+              ពេលចាប់ផ្តើម អ្នកនឹងឃើញតែភាសាកូរ៉េជាមុនសិន។ បន្ទាប់ពីឆ្លើយរួច ការបកប្រែខ្មែរ របៀបអាន
+              និងការពន្យល់លម្អិតនឹងបង្ហាញដោយស្វ័យប្រវត្តិ។
+            </p>
+            <div class="space-y-3 text-sm">
+              <div class="p-3 rounded-xl bg-[#101728] border border-slate-700">
+                <b class="text-yellow-400">រចនាសម្ព័ន្ធសំណួរ</b>
+                <ul class="list-disc pl-5 mt-2 text-slate-300 space-y-1">
+                  <li>សំណួរ 1-10: ពាក្យសព្ទ និងវេយ្យាករណ៍</li>
+                  <li>សំណួរ 11-25: ការអានយល់ន័យ</li>
+                  <li>សំណួរ 26-30: វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ</li>
+                </ul>
+              </div>
+              <div class="p-3 rounded-xl bg-[#101728] border border-slate-700">
+                <b class="text-yellow-400">មុខងារជំនួយ</b>
+                <ul class="list-disc pl-5 mt-2 text-slate-300 space-y-1">
+                  <li>បកប្រែសំណួរ</li>
+                  <li>កាត់ 50/50</li>
+                  <li>បកប្រែចម្លើយ</li>
+                  <li>សំឡេង Google TTS + Web Speech fallback</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="p-5 rounded-2xl bg-[#101728] border border-slate-700">
+            <h3 class="font-bold text-xl mb-3">ការកំណត់មេរៀនដោយស្វ័យប្រវត្តិ</h3>
+            <div class="text-slate-300 space-y-2 text-sm mb-5">
+              <p><b class="text-white">Level:</b> <span id="autoLevel">4</span></p>
+              <p><b class="text-white">Lesson:</b> <span id="autoLesson">15</span></p>
+              <p><b class="text-white">Title:</b> <span id="autoTitle">법과 질서</span></p>
+              <p><b class="text-white">Culture:</b> <span id="autoCulture">찾기 쉬운 생활 법령 정보</span></p>
+            </div>
+            <button id="startBtn" class="w-full btn-primary rounded-xl px-4 py-3 text-lg">ចាប់ផ្តើមតេស្ត</button>
+            <p class="text-xs text-slate-400 mt-3">Tip: អ្នកអាចចុចប៊ូតុង 🔊 ដើម្បីស្តាប់កូរ៉េ ឬខ្មែរ។ ចុចម្ដងទៀតដើម្បី pause/play។</p>
+          </div>
+        </div>
+      </div>
 
-        const QUIZ_DATA = [{
-            id: 1,
-            type: 'grammar',
-            question: '빈칸에 알맞은 것을 고르세요. \n"여러분도 ________, 한국에서는 오른쪽으로 차가 다닙니다."',
-            questionTrans: 'ជ្រើសរើសពាក្យដែលត្រឹមត្រូវសម្រាប់ចន្លោះ។ "ដូចដែលអ្នកទាំងអស់គ្នាដឹងហើយ ________ នៅកូរ៉េ រថយន្តបើកបរនៅខាងស្តាំ។"',
-            options: ['알다시피', '알더니', '알면서', '알기 위해'],
-            optionsTrans: ['ដូចដែលដឹង', 'ហើយបន្ទាប់មកដឹង', 'ខណៈពេលដែលដឹង', 'ដើម្បីដឹង'],
-            correct: 0,
-            explanation: '「-다시피」는 이미 알고 있는 사실을 언급할 때 사용합니다. (ប្រើ -다시피 ដើម្បីបង្ហាញពីការពិតដែលគេដឹងស្រាប់)',
-            explanationTrans: 'ប្រើ -다시피 ដើម្បីបង្ហាញពីការពិតដែលគេដឹងស្រាប់។'
-        }, {
-            id: 2,
-            type: 'vocab',
-            question: '"경범죄"의 의미로 알맞은 것은?',
-            questionTrans: 'តើអត្ថន័យត្រឹមត្រូវនៃ "បទល្មើសស្រាល" គឺអ្វី?',
-            options: ['중대한 범죄', '가벼운 범죄', '국제 범죄', '사이버 범죄'],
-            optionsTrans: ['បទល្មើសធ្ងន់ធ្ងរ', 'បទល្មើសស្រាល', 'បទល្មើសអន្តរជាតិ', 'បទល្មើសតាមអ៊ីនធឺណិត'],
-            correct: 1,
-            explanation: '경범죄는 일상생활에서 흔하게 일어나고 처벌이 가벼운 범죄입니다. (បទល្មើសស្រាលគឺជាបទល្មើសដែលកើតឡើងញឹកញាប់ក្នុងជីវិតប្រចាំថ្ងៃ និងមានទោសស្រាល)',
-            explanationTrans: 'បទល្មើសស្រាលគឺជាបទល្មើសដែលកើតឡើងញឹកញាប់ក្នុងជីវិតប្រចាំថ្ងៃ និងមានទោសស្រាល។'
-        }, {
-            id: 3,
-            type: 'grammar',
-            question: '빈칸에 알맞은 것을 고르세요. \n"약속 시간은 반드시 ________."',
-            questionTrans: 'ជ្រើសរើសពាក្យដែលត្រឹមត្រូវសម្រាប់ចន្លោះ។ "ពេលវេលាណាត់ជួបគឺត្រូវតែ ________ ។"',
-            options: ['지키는 척하다', '지키는 법이다', '지키는 정도', '지키는 나머지'],
-            optionsTrans: ['ធ្វើដូចជាគោរព', 'ជារឿងដែលត្រូវតែគោរព', 'ដល់កម្រិតដែលគោរព', 'លទ្ធផលនៃការគោរព'],
-            correct: 1,
-            explanation: '「-는 법이다」는 당연히 그렇게 되는 것임을 나타냅니다. (ប្រើ -는 법이다 ដើម្បីបង្ហាញថាជារឿងដែលត្រូវតែកើតឡើង)',
-            explanationTrans: 'ប្រើ -는 법이다 ដើម្បីបង្ហាញថាជារឿងដែលត្រូវតែកើតឡើង។'
-        }, {
-            id: 4,
-            type: 'vocab',
-            question: '"명예훼손죄"의 의미로 알맞은 것은?',
-            questionTrans: 'តើអត្ថន័យត្រឹមត្រូវនៃ "បទល្មើសបំផ្លាញកិត្តិយស" គឺអ្វី?',
-            options: ['다른 사람을 때리는 죄', '다른 사람의 명예를 훼손하는 죄', '돈을 훔치는 죄', '건물에 불을 지르는 죄'],
-            optionsTrans: ['បទល្មើសវាយដំអ្នកដទៃ', 'បទល្មើសបំផ្លាញកិត្តិយសអ្នកដទៃ', 'បទល្មើសលួចលុយ', 'បទល្មើសដុតអគារ'],
-            correct: 1,
-            explanation: '명예훼손죄는 다른 사람의 명예를 훼손하는 범죄입니다. (បទល្មើសបំផ្លាញកិត្តិយសគឺជាបទល្មើសដែលបំផ្លាញកិត្តិយសអ្នកដទៃ)',
-            explanationTrans: 'បទល្មើសបំផ្លាញកិត្តិយសគឺជាបទល្មើសដែលបំផ្លាញកិត្តិយសអ្នកដទៃ។'
-        }, {
-            id: 5,
-            type: 'grammar',
-            question: '빈칸에 알맞은 것을 고르세요. \n"________, 이곳은 공공장소이므로 금연입니다."',
-            questionTrans: 'ជ្រើសរើសពាក្យដែលត្រឹមត្រូវសម្រាប់ចន្លោះ។ "________ កន្លែងនេះជាកន្លែងសាធារណៈ ដូច្នេះហាមជក់បារី។"',
-            options: ['보시다시피', '보더니', '보는 한', '볼 뻔'],
-            optionsTrans: ['ដូចដែលអ្នកឃើញ', 'ហើយបន្ទាប់មកឃើញ', 'ដរាបណាឃើញ', 'ស្ទើរតែឃើញ'],
-            correct: 0,
-            explanation: '「-다시피」는 상대방이 보고 있는 상황을 언급할 때 씁니다. (ប្រើ -다시피 ដើម្បីបង្ហាញពីស្ថានភាពដែលអ្នកដទៃកំពុងឃើញ)',
-            explanationTrans: 'ប្រើ -다시피 ដើម្បីបង្ហាញពីស្ថានភាពដែលអ្នកដទៃកំពុងឃើញ។'
-        }, {
-            id: 6,
-            type: 'vocab',
-            question: '"범칙금"에 대한 설명으로 알맞은 것은?',
-            questionTrans: 'តើការពិពណ៌នាត្រឹមត្រូវអំពី "ប្រាក់ពិន័យចរាចរណ៍" គឺជាអ្វី?',
-            options: ['법정 벌금', '교통법규 위반 시 내는 벌금', '소송 비용', '변호사 비용'],
-            optionsTrans: ['ប្រាក់ពិន័យតាមច្បាប់', 'ប្រាក់ពិន័យដែលត្រូវបង់ពេលបំពានច្បាប់ចរាចរណ៍', 'ថ្លៃបណ្តឹង', 'ថ្លៃមេធាវី'],
-            correct: 1,
-            explanation: '범칙금은 교통법규를 위반했을 때 내는 벌금입니다. (ប្រាក់ពិន័យចរាចរណ៍គឺជាប្រាក់ពិន័យដែលត្រូវបង់ពេលបំពានច្បាប់ចរាចរណ៍)',
-            explanationTrans: 'ប្រាក់ពិន័យចរាចរណ៍គឺជាប្រាក់ពិន័យដែលត្រូវបង់ពេលបំពានច្បាប់ចរាចរណ៍។'
-        }, {
-            id: 7,
-            type: 'grammar',
-            question: '빈칸에 알맞은 것을 고르세요. \n"아무리 바빠도 인사는 ________."',
-            questionTrans: 'ជ្រើសរើសពាក្យដែលត្រឹមត្រូវសម្រាប់ចន្លោះ។ "មិនថារវល់ប៉ុណ្ណាក៏ដោយ ការសួរសុខទុក្ខគឺ ________ ។"',
-            options: ['하는 법이다', '하지 않는 법이다', '할 뻔하다', '한 나머지'],
-            optionsTrans: ['ជារឿងដែលត្រូវធ្វើ', 'ជារឿងដែលមិនត្រូវធ្វើ', 'ស្ទើរតែធ្វើ', 'លទ្ធផលនៃការធ្វើ'],
-            correct: 0,
-            explanation: '「-는 법이다」는 당연히 해야 하는 일을 나타냅니다. (ប្រើ -는 법이다 ដើម្បីបង្ហាញពីអ្វីដែលត្រូវធ្វើជាធម្មតា)',
-            explanationTrans: 'ប្រើ -는 법이다 ដើម្បីបង្ហាញពីអ្វីដែលត្រូវធ្វើជាធម្មតា។'
-        }, {
-            id: 8,
-            type: 'vocab',
-            question: '"검거율"의 의미로 알맞은 것은?',
-            questionTrans: 'តើអត្ថន័យត្រឹមត្រូវនៃ "អត្រាចាប់ខ្លួន" គឺអ្វី?',
-            options: ['범인을 잡는 비율', '범죄가 일어나는 비율', '법률 위반 비율', '교통사고 비율'],
-            optionsTrans: ['អត្រាចាប់ជនល្មើស', 'អត្រាឧក្រិដ្ឋកម្មកើតឡើង', 'អត្រាបំពានច្បាប់', 'អត្រាគ្រោះថ្នាក់ចរាចរណ៍'],
-            correct: 0,
-            explanation: '검거율은 범인을 잡는 비율입니다. (អត្រាចាប់ខ្លួនគឺអត្រាចាប់ជនល្មើស)',
-            explanationTrans: 'អត្រាចាប់ខ្លួនគឺអត្រាចាប់ជនល្មើស។'
-        }, {
-            id: 9,
-            type: 'grammar',
-            question: '빈칸에 알맞은 것을 고르세요. \n"________, 법은 모두에게 공평합니다."',
-            questionTrans: 'ជ្រើសរើសពាក្យដែលត្រឹមត្រូវសម្រាប់ចន្លោះ។ "________ ច្បាប់គឺស្មើភាពគ្នាចំពោះមនុស្សគ្រប់គ្នា។"',
-            options: ['아시다시피', '알더라도', '알면', '알고'],
-            optionsTrans: ['ដូចដែលអ្នកដឹង', 'ទោះបីជាដឹងក៏ដោយ', 'ប្រសិនបើដឹង', 'ដឹងហើយ'],
-            correct: 0,
-            explanation: '「-다시피」는 상대방이 이미 알고 있는 사실을 말할 때 사용합니다. (ប្រើ -다시피 ដើម្បីប្រាប់ពីការពិតដែលអ្នកដទៃដឹងស្រាប់)',
-            explanationTrans: 'ប្រើ -다시피 ដើម្បីប្រាប់ពីការពិតដែលអ្នកដទៃដឹងស្រាប់។'
-        }, {
-            id: 10,
-            type: 'vocab',
-            question: '"시민 의식"의 의미로 알맞은 것은?',
-            questionTrans: 'តើអត្ថន័យត្រឹមត្រូវនៃ "មនសិការពលរដ្ឋ" គឺអ្វី?',
-            options: ['법을 만드는 능력', '시민으로서의 의식과 태도', '경찰의 권한', '범죄 예방 기술'],
-            optionsTrans: ['សមត្ថភាពបង្កើតច្បាប់', 'មនសិការ និងអាកប្បកិរិយាជាពលរដ្ឋ', 'អំណាចរបស់ប៉ូលីស', 'បច្ចេកវិទ្យាបង្ការឧក្រិដ្ឋកម្ម'],
-            correct: 1,
-            explanation: '시민 의식은 시민으로서 가져야 할 의식과 태도를 의미합니다. (មនសិការពលរដ្ឋមានន័យថា មនសិការ និងអាកប្បកិរិយាដែលពលរដ្ឋគួរមាន)',
-            explanationTrans: 'មនសិការពលរដ្ឋមានន័យថា មនសិការ និងអាកប្បកិរិយាដែលពលរដ្ឋគួរមាន។'
-        }, {
-            id: 11,
-            type: 'reading',
-            question: '다음 글을 읽고 물음에 답하세요.\n"경찰청 자료에 따르면 가장 많이 처벌을 받은 경범죄는 ‘쓰레기 투기’가 36.2%로 가장 높게 나타났다."\n지난 1년간 가장 많이 처벌받은 경범죄는 무엇입니까?',
-            questionTrans: 'អានអត្ថបទខាងក្រោម ហើយឆ្លើយសំណួរ។ "យោងតាមទិន្នន័យរបស់ទីស្នាក់ការប៉ូលីស បទល្មើសស្រាលដែលត្រូវពិន័យច្រើនជាងគេគឺ 'ការចាក់សំរាម' មាន 36.2% ខ្ពស់ជាងគេ។" តើបទល្មើសស្រាលណាដែលត្រូវពិន័យច្រើនជាងគេក្នុងឆ្នាំកន្លងមក?',
-            options: ['쓰레기 투기', '음주 소란', '인근 소란', '광고물 부착'],
-            optionsTrans: ['ការចាក់សំរាម', 'ការរំខានដោយសារការសេពគ្រឿងស្រវឹង', 'ការរំខានដល់អ្នកជិតខាង', 'ការបិទផ្សាយពាណិជ្ជកម្ម'],
-            correct: 0,
-            explanation: '글에서 쓰레기 투기가 36.2%로 가장 많다고 했습니다. (អត្ថបទបាននិយាយថា ការចាក់សំរាមមាន 36.2% ច្រើនជាងគេ)',
-            explanationTrans: 'អត្ថបទបាននិយាយថា ការចាក់សំរាមមាន 36.2% ច្រើនជាងគេ។'
-        }, {
-            id: 12,
-            type: 'reading',
-            question: '다음 중 경범죄가 아닌 것은 무엇입니까?',
-            questionTrans: 'តើមួយណាខាងក្រោមមិនមែនជាបទល្មើសស្រាល?',
-            options: ['쓰레기 투기', '음주 소란', '다른 사람을 때려서 다치게 하다', '인근 소란'],
-            optionsTrans: ['ការចាក់សំរាម', 'ការរំខានដោយសារការសេពគ្រឿងស្រវឹង', 'ការវាយដំអ្នកដទៃឱ្យរបួស', 'ការរំខានដល់អ្នកជិតខាង'],
-            correct: 2,
-            explanation: '다른 사람을 때려서 다치게 하는 것은 폭력 범죄로 중범죄에 해당합니다. (ការវាយដំអ្នកដទៃឱ្យរបួសគឺជាឧក្រិដ្ឋកម្មធ្ងន់ធ្ងរ)',
-            explanationTrans: 'ការវាយដំអ្នកដទៃឱ្យរបួសគឺជាឧក្រិដ្ឋកម្មធ្ងន់ធ្ងរ។'
-        }, {
-            id: 13,
-            type: 'reading',
-            question: '"5대 범죄"에 해당하지 않는 것은 무엇입니까? (살인, 강도, 강간, 절도, 폭력)',
-            questionTrans: 'តើមួយណាមិនស្ថិតក្នុង "ឧក្រិដ្ឋកម្មទាំង ៥"? (ឃាតកម្ម, ប្លន់, រំលោភ, លួច, អំពើហិង្សា)',
-            options: ['살인', '강도', '명예훼손', '폭력'],
-            optionsTrans: ['ឃាតកម្ម', 'ប្លន់', 'បំផ្លាញកិត្តិយស', 'អំពើហិង្សា'],
-            correct: 2,
-            explanation: '명예훼손은 5대 범죄에 포함되지 않습니다. (បំផ្លាញកិត្តិយសមិនស្ថិតក្នុងឧក្រិដ្ឋកម្មទាំង ៥ ទេ)',
-            explanationTrans: 'បំផ្លាញកិត្តិយសមិនស្ថិតក្នុងឧក្រិដ្ឋកម្មទាំង ៥ ទេ។'
-        }, {
-            id: 14,
-            type: 'reading',
-            question: '오토바이를 탈 때 꼭 해야 하는 것은 무엇입니까? (교통 법규)',
-            questionTrans: 'តើត្រូវធ្វើអ្វីខ្លះពេលជិះម៉ូតូ? (ច្បាប់ចរាចរណ៍)',
-            options: ['헬멧을 쓰다', '안전벨트를 매다', '면허증을 제시하다', '보험에 가입하다'],
-            optionsTrans: ['ពាក់មួកសុវត្ថិភាព', 'ពាក់ខ្សែក្រវាត់សុវត្ថិភាព', 'បង្ហាញប័ណ្ណបើកបរ', 'ចុះបញ្ជីធានារ៉ាប់រង'],
-            correct: 0,
-            explanation: '오토바이를 탈 때는 헬멧을 꼭 써야 합니다. (ពេលជិះម៉ូតូ ត្រូវពាក់មួកសុវត្ថិភាព)',
-            explanationTrans: 'ពេលជិះម៉ូតូ ត្រូវពាក់មួកសុវត្ថិភាព។'
-        }, {
-            id: 15,
-            type: 'reading',
-            question: '"음주 소란"은 어떤 범죄에 해당합니까?',
-            questionTrans: '"ការរំខានដោយសារការសេពគ្រឿងស្រវឹង" ស្ថិតក្នុងបទល្មើសប្រភេទណា?',
-            options: ['중범죄', '경범죄', '특별법 위반', '민사소송'],
-            optionsTrans: ['ឧក្រិដ្ឋកម្មធ្ងន់ធ្ងរ', 'បទល្មើសស្រាល', 'បំពានច្បាប់ពិសេស', 'បណ្តឹងរដ្ឋប្បវេណី'],
-            correct: 1,
-            explanation: '음주 소란은 경범죄에 해당합니다. (ការរំខានដោយសារការសេពគ្រឿងស្រវឹងជាបទល្មើសស្រាល)',
-            explanationTrans: 'ការរំខានដោយសារការសេពគ្រឿងស្រវឹងជាបទល្មើសស្រាល។'
-        }, {
-            id: 16,
-            type: 'reading',
-            question: '5대 범죄가 줄어든 이유는 무엇입니까?',
-            questionTrans: 'តើមូលហេតុអ្វីដែលធ្វើឱ្យឧក្រិដ្ឋកម្មទាំង ៥ ថយចុះ?',
-            options: ['과학 기술 발달', '경찰 수 증가', '법 강화', '시민 의식 향상'],
-            optionsTrans: ['ការអភិវឌ្ឍបច្ចេកវិទ្យាវិទ្យាសាស្ត្រ', 'ការកើនឡើងចំនួនប៉ូលីស', 'ការពង្រឹងច្បាប់', 'ការកើនឡើងមនសិការពលរដ្ឋ'],
-            correct: 0,
-            explanation: '글에서 과학 기술 발달로 검거율이 높아졌다고 했습니다. (អត្ថបទបាននិយាយថា ការអភិវឌ្ឍបច្ចេកវិទ្យាបានបង្កើនអត្រាចាប់ខ្លួន)',
-            explanationTrans: 'អត្ថបទបាននិយាយថា ការអភិវឌ្ឍបច្ចេកវិទ្យាបានបង្កើនអត្រាចាប់ខ្លួន។'
-        }, {
-            id: 17,
-            type: 'reading',
-            question: '경범죄에 걸리면 어떻게 됩니까?',
-            questionTrans: 'បើប្រព្រឹត្តបទល្មើសស្រាល តើត្រូវទទួលទោសយ៉ាងដូចម្តេច?',
-            options: ['구속', '벌금', '사회봉사', '교육'],
-            optionsTrans: ['ឃុំខ្លួន', 'ពិន័យជាប្រាក់', 'បម្រើសេវាសង្គម', 'ការអប់រំ'],
-            correct: 1,
-            explanation: '경범죄에 걸리면 벌금을 내야 합니다. (បើប្រព្រឹត្តបទល្មើសស្រាល ត្រូវបង់ប្រាក់ពិន័យ)',
-            explanationTrans: 'បើប្រព្រឹត្តបទល្មើសស្រាល ត្រូវបង់ប្រាក់ពិន័យ។'
-        }, {
-            id: 18,
-            type: 'reading',
-            question: '출입이 금지된 장소에 들어가는 행위는 무엇입니까?',
-            questionTrans: 'តើការចូលទៅកន្លែងដែលហាមចូលគឺជាអ្វី?',
-            options: ['허용', '경범죄', '중범죄', '합법'],
-            optionsTrans: ['អនុញ្ញាត', 'បទល្មើសស្រាល', 'ឧក្រិដ្ឋកម្មធ្ងន់ធ្ងរ', 'ស្របច្បាប់'],
-            correct: 1,
-            explanation: '출입이 금지된 장소에 들어가는 것도 경범죄입니다. (ការចូលទៅកន្លែងដែលហាមចូលក៏ជាបទល្មើសស្រាលដែរ)',
-            explanationTrans: 'ការចូលទៅកន្លែងដែលហាមចូលក៏ជាបទល្មើសស្រាលដែរ។'
-        }, {
-            id: 19,
-            type: 'reading',
-            question: '검거율이 높아지면 시민들에게 어떤 영향이 있습니까?',
-            questionTrans: 'បើអត្រាចាប់ខ្លួនកើនឡើង តើមានផលប៉ះពាល់អ្វីដល់ប្រជាពលរដ្ឋ?',
-            options: ['불안감 증가', '불안감 감소', '범죄 증가', '법률 복잡'],
-            optionsTrans: ['ការកើនឡើងនៃការថប់បារម្ភ', 'ការថយចុះនៃការថប់បារម្ភ', 'ការកើនឡើងនៃឧក្រិដ្ឋកម្ម', 'ភាពស្មុគស្មាញនៃច្បាប់'],
-            correct: 1,
-            explanation: '검거율이 높아지면 시민들의 불안감이 낮아집니다. (បើអត្រាចាប់ខ្លួនកើនឡើង ការថប់បារម្ភរបស់ប្រជាពលរដ្ឋថយចុះ)',
-            explanationTrans: 'បើអត្រាចាប់ខ្លួនកើនឡើង ការថប់បារម្ភរបស់ប្រជាពលរដ្ឋថយចុះ។'
-        }, {
-            id: 20,
-            type: 'reading',
-            question: '쓰레기 투기로 처벌받은 비율은 얼마입니까?',
-            questionTrans: 'តើអត្រាការពិន័យពីបទចាក់សំរាមមានប៉ុន្មានភាគរយ?',
-            options: ['17.3%', '36.2%', '10.4%', '54%'],
-            optionsTrans: ['17.3%', '36.2%', '10.4%', '54%'],
-            correct: 1,
-            explanation: '쓰레기 투기는 36.2%로 가장 높은 비율을 차지합니다. (ការចាក់សំរាមមាន 36.2% ខ្ពស់ជាងគេ)',
-            explanationTrans: 'ការចាក់សំរាមមាន 36.2% ខ្ពស់ជាងគេ។'
-        }, {
-            id: 21,
-            type: 'reading',
-            question: '생활 법령 정보를 쉽게 찾을 수 있는 곳은 어디입니까? (찾기 쉬운 생활 법령 정보)',
-            questionTrans: 'តើកន្លែងណាដែលអាចស្វែងរកព័ត៌មានច្បាប់ប្រចាំថ្ងៃបានយ៉ាងងាយស្រួល?',
-            options: ['국가법령정보센터', '경찰서', '법원', '구청'],
-            optionsTrans: ['មជ្ឈមណ្ឌលព័ត៌មានច្បាប់ជាតិ', 'ប៉ុស្តិ៍ប៉ូលីស', 'តុលាការ', 'ការិយាល័យស្រុក'],
-            correct: 0,
-            explanation: '생활 법령 정보는 국가법령정보센터에서 제공됩니다. (ព័ត៌មានច្បាប់ប្រចាំថ្ងៃត្រូវបានផ្តល់ដោយមជ្ឈមណ្ឌលព័ត៌មានច្បាប់ជាតិ)',
-            explanationTrans: 'ព័ត៌មានច្បាប់ប្រចាំថ្ងៃត្រូវបានផ្តល់ដោយមជ្ឈមណ្ឌលព័ត៌មានច្បាប់ជាតិ។'
-        }, {
-            id: 22,
-            type: 'reading',
-            question: '안전하고 편안한 사회를 만들기 위해 필요한 것은 무엇입니까?',
-            questionTrans: 'តើត្រូវការអ្វីខ្លះដើម្បីបង្កើតសង្គមដែលមានសុវត្ថិភាព និងសុខស្រួល?',
-            options: ['엄격한 법', '성숙한 시민 의식', '많은 경찰', '감시 카메라'],
-            optionsTrans: ['ច្បាប់តឹងរ៉ឹង', 'មនសិការពលរដ្ឋចាស់ទុំ', 'ប៉ូលីសច្រើន', 'កាមេរ៉ាឃ្លាំមើល'],
-            correct: 1,
-            explanation: '성숙한 시민 의식이 안전한 사회를 만듭니다. (មនសិការពលរដ្ឋចាស់ទុំបង្កើតសង្គមដែលមានសុវត្ថិភាព)',
-            explanationTrans: 'មនសិការពលរដ្ឋចាស់ទុំបង្កើតសង្គមដែលមានសុវត្ថិភាព។'
-        }, {
-            id: 23,
-            type: 'reading',
-            question: '"대수롭지 않게 생각하다"의 의미는 무엇입니까?',
-            questionTrans: 'តើ "គិតថាមិនសំខាន់" មានន័យដូចម្តេច?',
-            options: ['중요하게 생각하다', '무시하다', '기억하다', '이해하다'],
-            optionsTrans: ['គិតថាសំខាន់', 'មើលងាយ/មិនខ្វល់', 'ចងចាំ', 'យល់'],
-            correct: 1,
-            explanation: '대수롭지 않게 생각하다는 중요하지 않게 여기고 무시하는 것입니다. (គិតថាមិនសំខាន់ មានន័យថាមើលងាយ ឬមិនខ្វល់)',
-            explanationTrans: 'គិតថាមិនសំខាន់ មានន័យថាមើលងាយ ឬមិនខ្វល់។'
-        }, {
-            id: 24,
-            type: 'reading',
-            question: '"범칙금"은 주로 어떤 경우에 내는 것입니까?',
-            questionTrans: 'តើ "ប្រាក់ពិន័យចរាចរណ៍" ជាធម្មតាត្រូវបង់ក្នុងករណីអ្វី?',
-            options: ['교통법규 위반', '폭력 범죄', '사기', '명예훼손'],
-            optionsTrans: ['បំពានច្បាប់ចរាចរណ៍', 'ឧក្រិដ្ឋកម្មអំពើហិង្សា', 'បោកប្រាស់', 'បំផ្លាញកិត្តិយស'],
-            correct: 0,
-            explanation: '범칙금은 교통법규를 위반했을 때 내는 벌금입니다. (ប្រាក់ពិន័យចរាចរណ៍គឺជាប្រាក់ពិន័យដែលត្រូវបង់ពេលបំពានច្បាប់ចរាចរណ៍)',
-            explanationTrans: 'ប្រាក់ពិន័យចរាចរណ៍គឺជាប្រាក់ពិន័យដែលត្រូវបង់ពេលបំពានច្បាប់ចរាចរណ៍។'
-        }, {
-            id: 25,
-            type: 'reading',
-            question: '운전 중 휴대 전화를 사용하는 것이 위험한 이유는 무엇입니까?',
-            questionTrans: 'ហេតុអ្វីបានជាការប្រើប្រាស់ទូរស័ព្ទដៃពេលបើកបរមានគ្រោះថ្នាក់?',
-            options: ['사고 위험 증가', '벌금만 내면 됨', '괜찮음', '속도 증가'],
-            optionsTrans: ['ការកើនឡើងហានិភ័យគ្រោះថ្នាក់', 'គ្រាន់តែបង់ប្រាក់ពិន័យ', 'មិនអីទេ', 'បង្កើនល្បឿន'],
-            correct: 0,
-            explanation: '운전 중 휴대 전화 사용은 사고 위험을 증가시킵니다. (ការប្រើប្រាស់ទូរស័ព្ទដៃពេលបើកបរបង្កើនហានិភ័យគ្រោះថ្នាក់)',
-            explanationTrans: 'ការប្រើប្រាស់ទូរស័ព្ទដៃពេលបើកបរបង្កើនហានិភ័យគ្រោះថ្នាក់។'
-        }, {
-            id: 26,
-            type: 'culture',
-            question: '생활 법령 정보를 제공하는 대표적인 누리집은 무엇입니까? (p.202)',
-            questionTrans: 'តើគេហទំព័រល្បីឈ្មោះមួយណាដែលផ្តល់ព័ត៌មានច្បាប់ប្រចាំថ្ងៃ?',
-            options: ['국가법령정보센터', '네이버', '구글', '유튜브'],
-            optionsTrans: ['មជ្ឈមណ្ឌលព័ត៌មានច្បាប់ជាតិ', 'Naver', 'Google', 'YouTube'],
-            correct: 0,
-            explanation: '국가법령정보센터에서 생활 법령 정보를 제공합니다. (មជ្ឈមណ្ឌលព័ត៌មានច្បាប់ជាតិផ្តល់ព័ត៌មានច្បាប់ប្រចាំថ្ងៃ)',
-            explanationTrans: 'មជ្ឈមណ្ឌលព័ត៌មានច្បាប់ជាតិផ្តល់ព័ត៌មានច្បាប់ប្រចាំថ្ងៃ។'
-        }, {
-            id: 27,
-            type: 'culture',
-            question: '이러한 법령 정보 서비스의 주된 목적은 무엇입니까?',
-            questionTrans: 'តើគោលបំណងសំខាន់នៃសេវាកម្មព័ត៌មានច្បាប់នេះគឺអ្វី?',
-            options: [
-                '법을 어렵게 하기 위해',
-                '국민이 법을 쉽게 이해하도록 돕기 위해',
-                '벌금을 늘리기 위해',
-                '경찰을 돕기 위해'
-            ],
-            optionsTrans: [
-                'ដើម្បីធ្វើឱ្យច្បាប់ពិបាក',
-                'ដើម្បីជួយឱ្យប្រជាពលរដ្ឋយល់ច្បាប់បានងាយស្រួល',
-                'ដើម្បីបង្កើនប្រាក់ពិន័យ',
-                'ដើម្បីជួយប៉ូលីស'
-            ],
-            correct: 1,
-            explanation: '국민이 법을 쉽게 이해하도록 돕는 것이 목적입니다. (គោលបំណងគឺជួយឱ្យប្រជាពលរដ្ឋយល់ច្បាប់បានងាយស្រួល)',
-            explanationTrans: 'គោលបំណងគឺជួយឱ្យប្រជាពលរដ្ឋយល់ច្បាប់បានងាយស្រួល។'
-        }, {
-            id: 28,
-            type: 'culture',
-            question: '생활 법령 정보 서비스는 누구나 이용할 수 있습니까?',
-            questionTrans: 'តើសេវាកម្មព័ត៌មានច្បាប់ប្រចាំថ្ងៃអាចប្រើប្រាស់បានដោយអ្នកណាខ្លះ?',
-            options: ['한국인만', '외국인도 가능', '변호사만', '공무원만'],
-            optionsTrans: ['មានតែជនជាតិកូរ៉េ', 'ជនបរទេសក៏អាច', 'មានតែមេធាវី', 'មានតែមន្ត្រីរាជការ'],
-            correct: 1,
-            explanation: '이 서비스는 외국인을 포함한 모든 사람이 이용할 수 있습니다. (សេវាកម្មនេះអាចប្រើប្រាស់បានដោយមនុស្សគ្រប់គ្នា រួមទាំងជនបរទេស)',
-            explanationTrans: 'សេវាកម្មនេះអាចប្រើប្រាស់បានដោយមនុស្សគ្រប់គ្នា រួមទាំងជនបរទេស។'
-        }, {
-            id: 29,
-            type: 'culture',
-            question: '찾기 쉬운 생활 법령 정보에서 알 수 있는 내용은 무엇입니까?',
-            questionTrans: 'តើព័ត៌មានអ្វីខ្លះដែលអាចរកឃើញនៅក្នុងព័ត៌មានច្បាប់ប្រចាំថ្ងៃដែលអាចរកបានយ៉ាងងាយស្រួល?',
-            options: ['교통법규만', '민사법만', '생활 속 다양한 법령', '형사법만'],
-            optionsTrans: ['មានតែច្បាប់ចរាចរណ៍', 'មានតែច្បាប់រដ្ឋប្បវេណី', 'ច្បាប់ផ្សេងៗក្នុងជីវិតប្រចាំថ្ងៃ', 'មានតែច្បាប់ព្រហ្មទណ្ឌ'],
-            correct: 2,
-            explanation: '교통, 민사, 형사 등 생활 속 다양한 법령 정보를 제공합니다. (ផ្តល់ព័ត៌មានច្បាប់ផ្សេងៗក្នុងជីវិតប្រចាំថ្ងៃ ដូចជា ចរាចរណ៍ រដ្ឋប្បវេណី និងព្រហ្មទណ្ឌ)',
-            explanationTrans: 'ផ្តល់ព័ត៌មានច្បាប់ផ្សេងៗក្នុងជីវិតប្រចាំថ្ងៃ ដូចជា ចរាចរណ៍ រដ្ឋប្បវេណី និងព្រហ្មទណ្ឌ។'
-        }, {
-            id: 30,
-            type: 'culture',
-            question: '생활 법령 정보를 잘 알면 어떤 점이 좋습니까?',
-            questionTrans: 'តើការដឹងព័ត៌មានច្បាប់ប្រចាំថ្ងៃល្អផ្តល់អត្ថប្រយោជន៍អ្វីខ្លះ?',
-            options: ['불이익을 피할 수 있다', '세금을 줄일 수 있다', '취업이 쉽다', '여행이 쉽다'],
-            optionsTrans: ['អាចជៀសវាងគ្រោះថ្នាក់/ការខូចខាត', 'អាចកាត់បន្ថយពន្ធ', 'ងាយស្រួលរកការងារ', 'ងាយស្រួលធ្វើដំណើរ'],
-            correct: 0,
-            explanation: '법을 알면 불이익을 피하고 자신을 보호할 수 있습니다. (ការដឹងច្បាប់អាចជួយជៀសវាងគ្រោះថ្នាក់ និងការពារខ្លួន)',
-            explanationTrans: 'ការដឹងច្បាប់អាចជួយជៀសវាងគ្រោះថ្នាក់ និងការពារខ្លួន។'
-        }];
+      <div id="quizScreen" class="hidden">
+        <div class="p-4 md:p-6 border-b border-slate-800">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <div id="sectionLabel" class="text-yellow-400 font-bold mb-1">Section</div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span id="questionCounter" class="text-xl font-bold">Question 1</span>
+                <button id="questionSpeakKo" class="speaker-btn" title="ស្តាប់ភាសាកូរ៉េ">🔊</button>
+                <button id="questionSpeakKm" class="speaker-btn" title="ស្តាប់ភាសាខ្មែរ">🈁</button>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button id="hintTranslateQuestion" class="btn-secondary rounded-lg px-3 py-2 text-sm">បកប្រែសំណួរ</button>
+              <button id="hintFifty" class="btn-secondary rounded-lg px-3 py-2 text-sm">កាត់ 50/50</button>
+              <button id="hintTranslateOptions" class="btn-secondary rounded-lg px-3 py-2 text-sm">បកប្រែចម្លើយ</button>
+            </div>
+          </div>
+          <div class="w-full bg-slate-800 rounded-full h-3 mt-4 overflow-hidden">
+            <div id="progressBar" class="bg-yellow-400 h-3 rounded-full" style="width:0%"></div>
+          </div>
+        </div>
 
-        // ═══════════════════════════════════════════════════
-        //  QUIZ ENGINE (same structure as Lesson 2)
-        // ═══════════════════════════════════════════════════
+        <div class="p-4 md:p-6">
+          <div id="readingBox" class="hidden-soft mb-5 p-4 rounded-xl explain-box"></div>
 
-        (function() {
-            'use strict';
+          <div class="mb-5">
+            <div id="questionText" class="text-lg md:text-xl leading-8 font-semibold"></div>
+            <div id="questionTranslation" class="hidden-soft mt-3 text-muted leading-7"></div>
+            <div id="questionRomanization" class="hidden-soft mt-1 text-sm text-slate-400"></div>
+          </div>
 
-            const app = document.getElementById('app');
-            const quizArea = document.getElementById('quizArea');
-            const scoreDisplay = document.getElementById('scoreDisplay');
-            const progressFill = document.getElementById('progressFill');
+          <div id="optionsContainer" class="grid gap-3"></div>
 
-            let currentIndex = 0;
-            let score = 0;
-            let answered = false;
-            let powerups = { translateQ: false, fifty: false, translateA: false };
-            let selectedOption = null;
-            let questions = QUIZ_DATA;
-            let userAnswers = [];
+          <div id="answerArea" class="mt-6 hidden-soft">
+            <div id="resultMessage" class="text-lg font-bold mb-3"></div>
+            <div id="fullExplanation" class="explain-box rounded-xl p-4 space-y-3"></div>
+          </div>
 
-            // ── TTS via Android bridge or fallback ──
-            function speakText(text, lang = 'ko') {
-                if (typeof Android !== 'undefined' && typeof Android.speak === 'function') {
-                    try {
-                        Android.speak(text, lang);
-                        return;
-                    } catch (_) { /* fall through */ }
-                }
-                if ('speechSynthesis' in window) {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = lang;
-                    utterance.rate = 0.9;
-                    utterance.pitch = 1;
-                    window.speechSynthesis.cancel();
-                    window.speechSynthesis.speak(utterance);
-                } else {
-                    console.warn('TTS not available');
-                }
-            }
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button id="checkBtn" class="btn-primary rounded-xl px-5 py-3">ពិនិត្យចម្លើយ</button>
+            <button id="nextBtn" class="btn-secondary rounded-xl px-5 py-3 hidden-soft">សំណួរបន្ទាប់</button>
+          </div>
+        </div>
+      </div>
 
-            // ── Render ──
-            function render() {
-                if (currentIndex >= questions.length) {
-                    renderResults();
-                    return;
-                }
+      <div id="resultScreen" class="hidden p-6 md:p-8">
+        <div class="text-center">
+          <h2 class="text-3xl font-bold text-yellow-400 mb-2">បញ្ចប់ការធ្វើតេស្ត</h2>
+          <p class="text-slate-300 mb-6">អ្នកអាចប្រកួតជាមួយខ្លួនឯង ហើយមើលការពន្យល់ឡើងវិញបានគ្រប់សំណួរ។</p>
+          <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="p-5 rounded-2xl bg-[#101728] border border-slate-700">
+              <div class="text-slate-400 text-sm">ពិន្ទុសរុប</div>
+              <div id="finalScore" class="text-3xl font-bold text-yellow-400 mt-1">0/30</div>
+            </div>
+            <div class="p-5 rounded-2xl bg-[#101728] border border-slate-700">
+              <div class="text-slate-400 text-sm">ចម្លើយត្រូវ</div>
+              <div id="correctCount" class="text-3xl font-bold text-emerald-400 mt-1">0</div>
+            </div>
+            <div class="p-5 rounded-2xl bg-[#101728] border border-slate-700">
+              <div class="text-slate-400 text-sm">ភាគរយ</div>
+              <div id="percentageScore" class="text-3xl font-bold text-white mt-1">0%</div>
+            </div>
+          </div>
+          <div class="flex flex-wrap justify-center gap-3 mb-8">
+            <button id="reviewBtn" class="btn-primary rounded-xl px-5 py-3">ឆែកមើលចម្លើយឡើងវិញ</button>
+            <button id="restartBtn" class="btn-secondary rounded-xl px-5 py-3">ធ្វើម្តងទៀត</button>
+          </div>
+        </div>
 
-                const q = questions[currentIndex];
-                const total = questions.length;
-                const progress = ((currentIndex) / total) * 100;
-                progressFill.style.width = progress + '%';
-                scoreDisplay.textContent = score + ' / ' + total;
+        <div id="reviewContainer" class="hidden-soft space-y-4"></div>
+      </div>
+    </div>
+  </div>
 
-                answered = false;
-                selectedOption = null;
-                powerups = { translateQ: false, fifty: false, translateA: false };
+  <script>
+    const QUIZ_META = {
+      level: 4,
+      lesson: 15,
+      titleKo: '법과 질서',
+      titleKm: 'ច្បាប់ និងសណ្តាប់ធ្នាប់',
+      culture: '찾기 쉬운 생활 법령 정보'
+    };
 
-                let html = `
-                    <div class="card" id="card-${q.id}">
-                        <div class="q-number">${currentIndex+1} / ${total} · ${q.type === 'vocab' ? '어휘' : q.type === 'grammar' ? '문법' : q.type === 'reading' ? '읽기' : '문화'}</div>
-                        <div class="q-header-row">
-                            <div class="q-left">
-                                <div class="q-text">${q.question.replace(/\n/g, '<br>')}</div>
-                                <div class="q-translation" id="qTrans">${q.questionTrans}</div>
-                            </div>
-                            <button class="speech-trigger" data-speak="${q.question.replace(/"/g, '&quot;')}" data-lang="ko" aria-label="Listen Korean">
-                                🔊
-                            </button>
-                        </div>
+    const quizData = [
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'vocab',
+        question: '다음 중 “법을 어기면 벌을 받는다”의 뜻과 가장 관계있는 것은 무엇입니까?',
+        questionKm: 'តើមួយណាមានទាក់ទងជាងគេនឹងន័យថា “បើបំពានច្បាប់ នឹងទទួលទោស”?',
+        romanization: 'Daeum jung “beobeul eogimyeon beoreul batneunda”ui tteutgwa gajang gwangye inneun geoseun mueosimnikka?',
+        options: [
+          { ko: '질서를 지킨다', km: 'គោរពសណ្តាប់ធ្នាប់' },
+          { ko: '처벌을 받는다', km: 'ទទួលការផ្តន្ទាទោស' },
+          { ko: '정보를 찾는다', km: 'ស្វែងរកព័ត៌មាន' },
+          { ko: '길을 건넌다', km: 'ឆ្លងផ្លូវ' }
+        ],
+        answer: 1,
+        explanation: '“벌을 받는다”는 “처벌을 받는다”와 뜻이 비슷합니다.',
+        explanationKm: '“벌을 받는다” មានន័យស្រដៀងនឹង “ទទួលការផ្តន្ទាទោស”។',
+        vocab: [
+          ['법', 'ច្បាប់'],
+          ['어기다', 'បំពាន'],
+          ['벌', 'ទោស/ការផ្តន្ទាទោស'],
+          ['처벌', 'ការផ្តន្ទាទោសតាមច្បាប់']
+        ]
+      },
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'grammar',
+        question: '빈칸에 들어갈 가장 알맞은 것을 고르십시오. 부모님이 말씀하시다시피, 늦은 밤에는 큰 소리를 내면 안 됩니다.',
+        questionKm: 'ជ្រើសរើសពាក្យដែលត្រឹមត្រូវបំផុតដាក់ក្នុងចន្លោះ៖ ដូចដែលឪពុកម្តាយបាននិយាយ នៅពេលយប់ជ្រៅ មិនត្រូវបង្កសំឡេងខ្លាំងទេ។',
+        romanization: 'Binkane deureogal gajang almateun geoseul goreusipsio. Bumonimi malsseumhasidashipi, neujen bameneun keun sorireul naemyeon an doemnida.',
+        options: [
+          { ko: '말씀하시다시피', km: 'ដូចដែលបានមានប្រសាសន៍' },
+          { ko: '말씀하느라고', km: 'ដោយសារតែពោល' },
+          { ko: '말씀하자마자', km: 'ភ្លាមៗបន្ទាប់ពីនិយាយ' },
+          { ko: '말씀하더라도', km: 'ទោះបីនិយាយក៏ដោយ' }
+        ],
+        answer: 0,
+        explanation: '-다시피는 “이미 알고 있는 내용처럼”, “말한 바와 같이”의 의미를 나타냅니다.',
+        explanationKm: '-다시피 ប្រើសម្រាប់ន័យ “ដូចដែលបានដឹងរួច” ឬ “ដូចដែលបាននិយាយ”។',
+        vocab: [
+          ['늦은 밤', 'យប់ជ្រៅ'],
+          ['큰 소리', 'សំឡេងខ្លាំង'],
+          ['-다시피', 'ដូចដែល.../ស្ទើរតែ...']
+        ]
+      },
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'grammar',
+        question: '다음 중 “-는 법이다”를 가장 자연스럽게 사용한 문장은 무엇입니까?',
+        questionKm: 'តើប្រយោគមួយណាប្រើ “-는 법이다” ធម្មជាតិបំផុត?',
+        romanization: 'Daeum jung “-neun beobida”reul gajang jayeonseureopge sayonghan munjangeun mueosimnikka?',
+        options: [
+          { ko: '사람은 누구나 실수하는 법이다.', km: 'មនុស្សគ្រប់រូបតែងតែធ្វើខុសជារឿងធម្មតា។' },
+          { ko: '어제 친구를 만나는 법이다.', km: 'ម្សិលមិញជារឿងធម្មតាដែលជួបមិត្ត។' },
+          { ko: '지금 밥을 먹는 법이다.', km: 'ឥឡូវនេះជារឿងធម្មតាដែលញ៉ាំបាយ។' },
+          { ko: '학교에 가는 법이다?', km: 'ទៅសាលាជារឿងធម្មតា?' }
+        ],
+        answer: 0,
+        explanation: '-는 법이다는 일반적인 사실, 당연한 이치, 보편적인 진리를 말할 때 씁니다.',
+        explanationKm: '-는 법이다 ប្រើនៅពេលនិយាយអំពីការពិតទូទៅ ឬហេតុផលធម្មតា។',
+        vocab: [
+          ['누구나', 'នរណាក៏ដោយ/គ្រប់គ្នា'],
+          ['실수하다', 'ធ្វើខុស'],
+          ['보편적', 'ទូទៅ']
+        ]
+      },
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'vocab',
+        question: '다음 중 밑줄 친 말과 뜻이 가장 비슷한 것을 고르십시오. “보행자는 횡단보도로 건너야 합니다.”',
+        questionKm: 'ជ្រើសរើសពាក្យដែលមានន័យស្រដៀងបំផុតនឹងពាក្យដែលគូសបន្ទាត់ក្រោម៖ “អ្នកថ្មើរជើងត្រូវឆ្លងតាមផ្លូវឆ្លងកាត់។”',
+        romanization: 'Daeum jung mitjul chin malgwa tteusi gajang biseuthan geoseul goreusipsio. “Bohaengjaneun hoengdanbodoro geonneoya hamnida.”',
+        options: [
+          { ko: '운전자', km: 'អ្នកបើកបរ' },
+          { ko: '보행자', km: 'អ្នកថ្មើរជើង' },
+          { ko: '경찰관', km: 'ប៉ូលិស' },
+          { ko: '승객', km: 'អ្នកដំណើរ' }
+        ],
+        answer: 1,
+        explanation: '보행자는 길을 걸어 다니는 사람입니다.',
+        explanationKm: '보행자 មានន័យថា អ្នកដើរតាមផ្លូវ ឬអ្នកថ្មើរជើង។',
+        vocab: [
+          ['횡단보도', 'ផ្លូវឆ្លងកាត់'],
+          ['건너다', 'ឆ្លងកាត់'],
+          ['보행자', 'អ្នកថ្មើរជើង']
+        ]
+      },
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'grammar',
+        question: '빈칸에 들어갈 알맞은 것을 고르십시오. 한국에서는 법을 잘 몰라도 지켜야 하는 ______.',
+        questionKm: 'ជ្រើសរើសពាក្យត្រឹមត្រូវដាក់ក្នុងចន្លោះ៖ នៅកូរ៉េ ទោះបីមិនសូវស្គាល់ច្បាប់ក៏ដោយ ក៏ត្រូវគោរពវា ______។',
+        romanization: 'Binkane deureogal almateun geoseul goreusipsio. Hangugeseoneun beobeul jal mollado jikyeoya haneun ______.',
+        options: [
+          { ko: '법을 다시피', km: 'ច្បាប់ដូចជា' },
+          { ko: '법이다', km: 'ជាច្បាប់' },
+          { ko: '법인 것이다', km: 'គឺជាច្បាប់មួយ' },
+          { ko: '법이다.', km: 'ជារឿងធម្មតា/ជាច្បាប់ធម្មតា' }
+        ],
+        answer: 3,
+        explanation: '“지켜야 하는 법이다”는 “당연히 지켜야 한다”는 의미로 자연스럽습니다.',
+        explanationKm: '“지켜야 하는 법이다” មានន័យថា “ជារឿងធម្មតាដែលត្រូវគោរព”។',
+        vocab: [
+          ['지키다', 'គោរព/អនុវត្តតាម'],
+          ['몰라도', 'ទោះបីមិនដឹងក៏ដោយ'],
+          ['당연히', 'ជាក់ជាមិនខាន/ជារឿងធម្មតា']
+        ]
+      },
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'vocab',
+        question: '다음 중 “신고하다”의 뜻으로 가장 알맞은 것은 무엇입니까?',
+        questionKm: 'តើមួយណាជាន័យត្រឹមត្រូវបំផុតនៃ “신고하다”?',
+        romanization: 'Daeum jung “singohada”ui tteuseuro gajang almateun geoseun mueosimnikka?',
+        options: [
+          { ko: '문제를 관계 기관에 알리다', km: 'ជូនដំណឹងបញ្ហាទៅស្ថាប័នពាក់ព័ន្ធ' },
+          { ko: '길을 잃어버리다', km: 'វង្វេងផ្លូវ' },
+          { ko: '물건을 팔다', km: 'លក់របស់' },
+          { ko: '약속을 취소하다', km: 'លុបការណាត់' }
+        ],
+        answer: 0,
+        explanation: '신고하다는 경찰서나 기관에 사실을 알리는 것입니다.',
+        explanationKm: '신고하다 មានន័យថា រាយការណ៍ ឬជូនដំណឹងទៅប៉ូលិស ឬស្ថាប័ន។',
+        vocab: [
+          ['신고하다', 'រាយការណ៍'],
+          ['관계 기관', 'ស្ថាប័នពាក់ព័ន្ធ'],
+          ['사실', 'ការពិត']
+        ]
+      },
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'grammar',
+        question: '다음 문장을 완성하십시오. 뉴스에서 본 다시피, 음주 운전은 큰 사고로 이어질 수 있습니다.',
+        questionKm: 'បំពេញប្រយោគខាងក្រោម៖ ដូចដែលបានឃើញក្នុងព័ត៌មាន ការបើកបរស្រវឹងអាចនាំទៅគ្រោះថ្នាក់ធំបាន។',
+        romanization: 'Daeum munjangeul wanseonghasipsio. Nyuseueseo bon dashipi, eumju unjeoneun keun sagoro ieojil su itseumnida.',
+        options: [
+          { ko: '본 다시피', km: 'ដូចដែលបានឃើញ' },
+          { ko: '볼 다시피', km: 'ដូចដែលនឹងឃើញ' },
+          { ko: '보는 다시피', km: 'ដូចដែលកំពុងឃើញ' },
+          { ko: '봤다시피', km: 'ដូចដែលបានឃើញរួច' }
+        ],
+        answer: 3,
+        explanation: '과거 사실을 근거로 말할 때는 “봤다시피”가 가장 자연스럽습니다.',
+        explanationKm: 'ពេលយោងទៅកាន់អ្វីដែលបានឃើញរួច គេប្រើ “봤다시피” ធម្មជាតិជាងគេ។',
+        vocab: [
+          ['음주 운전', 'បើកបរស្រវឹង'],
+          ['사고', 'គ្រោះថ្នាក់'],
+          ['이어지다', 'នាំបន្តទៅ']
+        ]
+      },
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'vocab',
+        question: '“규칙”과 가장 비슷한 뜻을 가진 것은 무엇입니까?',
+        questionKm: 'តើពាក្យមួយណាមានន័យស្រដៀងជាងគេនឹង “규칙”?',
+        romanization: '“Gyuchik”gwa gajang biseuthan tteuseul gajin geoseun mueosimnikka?',
+        options: [
+          { ko: '약속된 질서', km: 'សណ្តាប់ធ្នាប់ ឬក្បួនដែលបានកំណត់' },
+          { ko: '갑작스러운 사고', km: 'គ្រោះថ្នាក់ភ្លាមៗ' },
+          { ko: '어려운 시험', km: 'ការប្រឡងពិបាក' },
+          { ko: '작은 선물', km: 'អំណោយតូច' }
+        ],
+        answer: 0,
+        explanation: '규칙은 사람들이 함께 지켜야 하는 약속이나 기준입니다.',
+        explanationKm: '규칙 មានន័យថា ច្បាប់ ឬបទបញ្ជាដែលមនុស្សគ្រប់គ្នាត្រូវគោរព។',
+        vocab: [
+          ['규칙', 'ក្បួន/ច្បាប់'],
+          ['기준', 'ស្តង់ដារ'],
+          ['질서', 'សណ្តាប់ធ្នាប់']
+        ]
+      },
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'grammar',
+        question: '다음 중 틀린 문장을 고르십시오.',
+        questionKm: 'ជ្រើសរើសប្រយោគដែលខុស។',
+        romanization: 'Daeum jung teullin munjangeul goreusipsio.',
+        options: [
+          { ko: '학생은 학교 규칙을 지켜야 하는 법이다.', km: 'សិស្សត្រូវគោរពបទបញ្ជាសាលា ជារឿងធម្មតា។' },
+          { ko: '아시다시피 여기는 금연 구역입니다.', km: 'ដូចដែលអ្នកដឹង តំបន់នេះជាតំបន់ហាមជក់បារី។' },
+          { ko: '비가 오는 법이다시피 우산을 가져가세요.', km: 'ព្រោះភ្លៀងជារឿងធម្មតាដូច្នេះយកឆ័ត្រទៅ។' },
+          { ko: '운전할 때는 안전벨트를 매는 법이다.', km: 'ពេលបើកបរ ត្រូវពាក់ខ្សែក្រវ៉ាត់សុវត្ថិភាពជារឿងធម្មតា។' }
+        ],
+        answer: 2,
+        explanation: '“-는 법이다시피”는 자연스럽지 않습니다. “비가 오다시피”나 “비가 오는 법이다”처럼 따로 써야 합니다.',
+        explanationKm: 'រចនាសម្ព័ន្ធ “-는 법이다시피” មិនធម្មជាតិទេ។ ត្រូវប្រើបំបែកជា “비가 오다시피” ឬ “비가 오는 법이다”។',
+        vocab: [
+          ['금연 구역', 'តំបន់ហាមជក់បារី'],
+          ['안전벨트', 'ខ្សែក្រវ៉ាត់សុវត្ថិភាព'],
+          ['틀리다', 'ខុស']
+        ]
+      },
+      {
+        section: 'ពាក្យសព្ទ និងវេយ្យាករណ៍',
+        type: 'grammar',
+        question: '빈칸에 들어갈 가장 알맞은 것을 고르십시오. 사람들이 서로 배려하면 갈등이 줄어드는 ______.',
+        questionKm: 'ជ្រើសរើសពាក្យសមស្របបំផុត៖ ប្រសិនបើមនុស្សគោរពគ្នាទៅវិញទៅមក ជម្លោះនឹងថយចុះ ______។',
+        romanization: 'Binkane deureogal gajang almateun geoseul goreusipsio. Saramdeuri seoro baeryeohamyeon galdeungi jureodeuneun ______.',
+        options: [
+          { ko: '다시피', km: 'ដូចដែល' },
+          { ko: '법이다', km: 'ជារឿងធម្មតា' },
+          { ko: '법인 다시피', km: 'ដូចជាច្បាប់' },
+          { ko: '법', km: 'ច្បាប់' }
+        ],
+        answer: 1,
+        explanation: '“줄어드는 법이다”는 일반적인 원리나 경향을 설명할 때 자연스럽습니다.',
+        explanationKm: '“줄어드는 법이다” ប្រើសម្រាប់ពណ៌នាអំពីគោលការណ៍ទូទៅ ឬទំនោរធម្មតា។',
+        vocab: [
+          ['배려하다', 'យកចិត្តទុកដាក់/គោរពគ្នា'],
+          ['갈등', 'ជម្លោះ'],
+          ['줄어들다', 'ថយចុះ']
+        ]
+      },
 
-                        <div class="options-grid" id="optionsGrid">
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '다음 글을 읽고 물음에 답하십시오.\n\n한국 사회에서는 법과 질서를 지키는 태도가 중요합니다. 특히 교통법규나 공공장소의 규칙은 모두의 안전과 편의를 위해 필요합니다. 많은 사람들은 사소한 규칙쯤은 어겨도 괜찮다고 생각하지만, 작은 위반이 큰 사고로 이어질 수 있습니다.',
+        readingKm: 'សង្គមកូរ៉េឲ្យសារៈសំខាន់លើទស្សនៈនៃការគោរពច្បាប់ និងសណ្តាប់ធ្នាប់។ ជាពិសេស ច្បាប់ចរាចរណ៍ ឬបទបញ្ជានៅទីសាធារណៈ គឺចាំបាច់សម្រាប់សុវត្ថិភាព និងភាពងាយស្រួលរបស់មនុស្សទាំងអស់។ មនុស្សជាច្រើនគិតថា ការបំពានក្បួនតូចតាចមិនអីទេ ប៉ុន្តែការបំពានតូចៗអាចនាំទៅគ្រោះថ្នាក់ធំបាន។',
+        question: '이 글의 중심 내용으로 가장 알맞은 것은 무엇입니까?',
+        questionKm: 'តើមាតិកាសំខាន់បំផុតនៃអត្ថបទនេះគឺអ្វី?',
+        romanization: 'I geurui jungsim naeyongeuro gajang almateun geoseun mueosimnikka?',
+        options: [
+          { ko: '공공장소는 재미있는 곳이다', km: 'ទីសាធារណៈជាកន្លែងគួរឱ្យសប្បាយ' },
+          { ko: '작은 규칙 위반도 큰 문제를 만들 수 있다', km: 'ការបំពានក្បួនតូចៗក៏អាចបង្កបញ្ហាធំបាន' },
+          { ko: '교통법규는 운전자만 지키면 된다', km: 'ច្បាប់ចរាចរណ៍ឲ្យតែអ្នកបើកបរគោរពគ្រប់គ្រាន់' },
+          { ko: '법은 알기 어려워서 필요 없다', km: 'ច្បាប់ពិបាកយល់ ដូច្នេះមិនចាំបាច់ទេ' }
+        ],
+        answer: 1,
+        explanation: '글은 작은 규칙 위반도 큰 사고나 문제로 이어질 수 있으니 법과 질서를 지켜야 한다는 점을 말합니다.',
+        explanationKm: 'អត្ថបទសង្កត់ធ្ងន់ថា ការបំពានតូចៗក៏អាចនាំទៅបញ្ហាធំ ដូច្នេះត្រូវគោរពច្បាប់ និងសណ្តាប់ធ្នាប់។',
+        vocab: [
+          ['교통법규', 'ច្បាប់ចរាចរណ៍'],
+          ['공공장소', 'ទីសាធារណៈ'],
+          ['위반', 'ការបំពាន']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '위 글을 다시 읽으십시오.',
+        readingKm: 'សូមអានអត្ថបទខាងលើម្តងទៀត។',
+        question: '윗글의 내용과 같은 것은 무엇입니까?',
+        questionKm: 'តើមួយណាត្រូវនឹងខ្លឹមសារអត្ថបទខាងលើ?',
+        romanization: 'Witgeurui naeyonggwa gateun geoseun mueosimnikka?',
+        options: [
+          { ko: '사소한 규칙은 어겨도 된다', km: 'អាចបំពានក្បួនតូចតាចបាន' },
+          { ko: '공공장소의 규칙은 안전과 편의를 위해 필요하다', km: 'បទបញ្ជាទីសាធារណៈចាំបាច់សម្រាប់សុវត្ថិភាព និងភាពងាយស្រួល' },
+          { ko: '법은 일부 사람에게만 중요하다', km: 'ច្បាប់សំខាន់សម្រាប់តែមនុស្សខ្លះ' },
+          { ko: '큰 사고는 갑자기만 일어난다', km: 'គ្រោះថ្នាក់ធំកើតឡើងតែភ្លាមៗប៉ុណ្ណោះ' }
+        ],
+        answer: 1,
+        explanation: '본문에 직접 제시된 내용입니다.',
+        explanationKm: 'នេះជាមាតិកាដែលបានបញ្ជាក់ដោយផ្ទាល់ក្នុងអត្ថបទ។',
+        vocab: [
+          ['편의', 'ភាពងាយស្រួល'],
+          ['직접', 'ដោយផ្ទាល់']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '민수 씨는 밤늦게 아파트 복도에서 큰 소리로 통화하곤 했습니다. 이웃들이 불편하다고 여러 번 말했지만, 민수 씨는 대수롭지 않게 생각했습니다. 결국 관리사무소에서 주의하라는 연락을 받았습니다.',
+        readingKm: 'លោកមិនស៊ូតែងតែទូរស័ព្ទសំឡេងខ្លាំងនៅច្រកអាផាតមិនយប់ជ្រៅ។ អ្នកជិតខាងបាននិយាយជាច្រើនដងថាមិនស្រួល ប៉ុន្តែលោកមិនស៊ូគិតថាមិនមែនរឿងធំទេ។ ចុងក្រោយគាត់បានទទួលការជូនដំណឹងពីការិយាល័យគ្រប់គ្រងឲ្យប្រុងប្រយ័ត្ន។',
+        question: '이 글을 통해 알 수 있는 것은 무엇입니까?',
+        questionKm: 'តើយើងអាចដឹងអ្វីតាមរយៈអត្ថបទនេះ?',
+        romanization: 'I geureul tonghae al su inneun geoseun mueosimnikka?',
+        options: [
+          { ko: '공동주택에서는 이웃을 배려해야 한다', km: 'នៅលំនៅឋានរួម ត្រូវយកចិត្តទុកដាក់អ្នកជិតខាង' },
+          { ko: '복도에서 뛰어야 한다', km: 'ត្រូវរត់នៅច្រកអាគារ' },
+          { ko: '관리사무소는 필요 없다', km: 'ការិយាល័យគ្រប់គ្រងមិនចាំបាច់ទេ' },
+          { ko: '밤에는 꼭 전화해야 한다', km: 'ពេលយប់ត្រូវតែទូរស័ព្ទ' }
+        ],
+        answer: 0,
+        explanation: '아파트 같은 공동주택에서는 소음 문제로 이웃에게 피해를 줄 수 있으므로 배려가 중요합니다.',
+        explanationKm: 'ក្នុងលំនៅឋានរួម ដូចជាអាផាតមិន សំឡេងរំខានអាចប៉ះពាល់ដល់អ្នកជិតខាង ដូច្នេះការគោរពគ្នាសំខាន់ណាស់។',
+        vocab: [
+          ['복도', 'ច្រក/ផ្លូវដើរអាគារ'],
+          ['대수롭지 않다', 'មិនគិតថាជារឿងធំ'],
+          ['주의', 'ការព្រមាន/ប្រយ័ត្ន']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '위 글의 내용과 다른 것을 고르십시오.',
+        readingKm: 'ជ្រើសរើសចម្លើយដែលខុសពីខ្លឹមសារអត្ថបទខាងលើ។',
+        question: '다음 중 맞지 않는 것은 무엇입니까?',
+        questionKm: 'តើមួយណាមិនត្រឹមត្រូវ?',
+        romanization: 'Daeum jung majji anneun geoseun mueosimnikka?',
+        options: [
+          { ko: '민수 씨는 이웃의 말을 가볍게 여겼다', km: 'មិនស៊ូបានមើលស្រាលសម្តីអ្នកជិតខាង' },
+          { ko: '관리사무소에서 연락이 왔다', km: 'ការិយាល័យគ្រប់គ្រងបានទាក់ទងមក' },
+          { ko: '민수 씨는 낮에 복도에서 운동했다', km: 'មិនស៊ូហាត់ប្រាណនៅច្រកអាគារពេលថ្ងៃ' },
+          { ko: '밤늦은 통화는 이웃에게 불편을 줄 수 있다', km: 'ការទូរស័ព្ទយប់ជ្រៅអាចរំខានអ្នកជិតខាង' }
+        ],
+        answer: 2,
+        explanation: '글에는 “낮에 복도에서 운동했다”는 내용이 없습니다.',
+        explanationKm: 'ក្នុងអត្ថបទមិនមាននិយាយថា “គាត់ហាត់ប្រាណនៅច្រកអាគារពេលថ្ងៃ” ទេ។',
+        vocab: [
+          ['가볍게 여기다', 'មើលស្រាល'],
+          ['불편', 'មិនស្រួល/ការរំខាន']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '경찰청에서는 보행자의 안전을 위해 무단횡단을 하지 말라고 안내합니다. 무단횡단은 운전자뿐 아니라 보행자에게도 매우 위험합니다. 조금 돌아가더라도 횡단보도를 이용하는 것이 좋습니다.',
+        readingKm: 'អគ្គស្នងការប៉ូលិសណែនាំថា មិនគួរឆ្លងផ្លូវខុសច្បាប់ ដើម្បីសុវត្ថិភាពអ្នកថ្មើរជើង។ ការឆ្លងផ្លូវខុសច្បាប់គឺគ្រោះថ្នាក់ខ្លាំងទាំងចំពោះអ្នកបើកបរ និងអ្នកថ្មើរជើង។ ទោះបីត្រូវដើរវាងបន្តិចក៏ដោយ ក៏គួរប្រើផ្លូវឆ្លងកាត់។',
+        question: '이 글의 제목으로 가장 알맞은 것은 무엇입니까?',
+        questionKm: 'តើចំណងជើងណាសមស្របបំផុតសម្រាប់អត្ថបទនេះ?',
+        romanization: 'I geurui jemogeuro gajang almateun geoseun mueosimnikka?',
+        options: [
+          { ko: '보행자 안전과 횡단보도 이용', km: 'សុវត្ថិភាពអ្នកថ្មើរជើង និងការប្រើផ្លូវឆ្លងកាត់' },
+          { ko: '운전면허 시험 준비', km: 'ការត្រៀមប្រឡងប័ណ្ណបើកបរ' },
+          { ko: '늦잠의 장단점', km: 'គុណវិបត្តិនៃការគេងយឺត' },
+          { ko: '공원 산책 예절', km: 'សុជីវធម៌ដើរលេងសួន' }
+        ],
+        answer: 0,
+        explanation: '글의 핵심은 무단횡단의 위험성과 횡단보도 이용의 중요성입니다.',
+        explanationKm: 'ស្នូលអត្ថបទគឺគ្រោះថ្នាក់នៃការឆ្លងផ្លូវខុសច្បាប់ និងសារៈសំខាន់នៃការប្រើផ្លូវឆ្លងកាត់។',
+        vocab: [
+          ['무단횡단', 'ឆ្លងផ្លូវខុសច្បាប់'],
+          ['안내하다', 'ណែនាំ/ជូនដំណឹង'],
+          ['이용하다', 'ប្រើប្រាស់']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '위 글의 내용으로 맞는 것은 무엇입니까?',
+        readingKm: 'តាមខ្លឹមសារអត្ថបទខាងលើ តើមួយណាត្រឹមត្រូវ?',
+        question: '가장 알맞은 것을 고르십시오.',
+        questionKm: 'ជ្រើសរើសចម្លើយដែលត្រឹមត្រូវបំផុត។',
+        romanization: 'Gajang almateun geoseul goreusipsio.',
+        options: [
+          { ko: '무단횡단은 보행자에게만 위험하다', km: 'ឆ្លងផ្លូវខុសច្បាប់គ្រោះថ្នាក់តែអ្នកថ្មើរជើង' },
+          { ko: '횡단보도를 이용하는 것이 좋다', km: 'គួរប្រើផ្លូវឆ្លងកាត់' },
+          { ko: '경찰청은 무단횡단을 권장한다', km: 'ប៉ូលិសលើកទឹកចិត្តឲ្យឆ្លងផ្លូវខុសច្បាប់' },
+          { ko: '조금 돌아가면 안 된다', km: 'មិនអាចដើរវាងបន្តិចបានទេ' }
+        ],
+        answer: 1,
+        explanation: '본문에 그대로 나온 내용입니다.',
+        explanationKm: 'នេះជាអ្វីដែលមានក្នុងអត្ថបទដោយផ្ទាល់។',
+        vocab: [
+          ['권장하다', 'លើកទឹកចិត្ត'],
+          ['위험하다', 'គ្រោះថ្នាក់']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '외국인 주민 센터에서는 생활 속에서 자주 겪는 법률 문제를 쉽게 설명해 주는 상담 서비스를 운영하고 있습니다. 계약, 임금, 주거, 가족 문제 등에 대해 궁금한 점이 있으면 도움을 받을 수 있습니다.',
+        readingKm: 'នៅមជ្ឈមណ្ឌលអ្នកស្នាក់នៅបរទេស មានសេវាពិគ្រោះដែលពន្យល់បញ្ហាច្បាប់ក្នុងជីវិតប្រចាំថ្ងៃឲ្យងាយយល់។ ប្រសិនបើមានចម្ងល់អំពីកិច្ចសន្យា ប្រាក់ឈ្នួល ការស្នាក់នៅ ឬបញ្ហាគ្រួសារ អ្នកអាចទទួលជំនួយបាន។',
+        question: '이 서비스의 특징으로 알맞은 것은 무엇입니까?',
+        questionKm: 'តើមួយណាជាលក្ខណៈពិសេសត្រឹមត្រូវនៃសេវានេះ?',
+        romanization: 'I seobiseuui teukjingeuro almateun geoseun mueosimnikka?',
+        options: [
+          { ko: '법률 문제를 쉽게 상담해 준다', km: 'ផ្តល់ការពិគ្រោះបញ្ហាច្បាប់ឲ្យងាយយល់' },
+          { ko: '운전 연습만 도와준다', km: 'ជួយតែការហាត់បើកបរ' },
+          { ko: '음식 배달을 해 준다', km: 'ដឹកអាហារ' },
+          { ko: '은행 업무만 설명한다', km: 'ពន្យល់តែការងារធនាគារ' }
+        ],
+        answer: 0,
+        explanation: '생활 법률 문제를 쉽게 설명하고 상담해 주는 서비스라고 했습니다.',
+        explanationKm: 'អត្ថបទនិយាយថា វាជាសេវាពន្យល់ និងពិគ្រោះបញ្ហាច្បាប់ក្នុងជីវិតប្រចាំថ្ងៃឲ្យងាយយល់។',
+        vocab: [
+          ['상담 서비스', 'សេវាពិគ្រោះ'],
+          ['계약', 'កិច្ចសន្យា'],
+          ['임금', 'ប្រាក់ឈ្នួល'],
+          ['주거', 'ការស្នាក់នៅ']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '위 글의 내용과 다른 것은 무엇입니까?',
+        readingKm: 'តើមួយណាខុសពីខ្លឹមសារអត្ថបទខាងលើ?',
+        question: '틀린 것을 고르십시오.',
+        questionKm: 'ជ្រើសរើសចម្លើយខុស។',
+        romanization: 'Teullin geoseul goreusipsio.',
+        options: [
+          { ko: '외국인 주민 센터에서 도움을 받을 수 있다', km: 'អាចទទួលជំនួយនៅមជ្ឈមណ្ឌលអ្នកស្នាក់នៅបរទេស' },
+          { ko: '주거 문제에 대한 상담도 가능하다', km: 'អាចពិគ្រោះបញ្ហាការស្នាក់នៅបានផងដែរ' },
+          { ko: '생활 속 법률 문제를 어렵게만 설명한다', km: 'ពន្យល់បញ្ហាច្បាប់ក្នុងជីវិតតែបែបពិបាកយល់ប៉ុណ្ណោះ' },
+          { ko: '가족 문제도 상담할 수 있다', km: 'អាចពិគ្រោះបញ្ហាគ្រួសារបានដែរ' }
+        ],
+        answer: 2,
+        explanation: '본문에는 “쉽게 설명해 준다”고 했으므로 3번은 틀렸습니다.',
+        explanationKm: 'អត្ថបទបាននិយាយថា “ពន្យល់ឲ្យងាយយល់” ដូច្នេះជម្រើសទី 3 ខុស។',
+        vocab: [
+          ['가능하다', 'អាចធ្វើបាន'],
+          ['어렵게', 'យ៉ាងពិបាក']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '회사에서 일하는 동안 산업 안전 수칙을 지키는 것은 매우 중요합니다. 보호 장비를 착용하지 않거나 안내를 무시하면 큰 사고가 날 수 있습니다. 처음에는 불편하게 느껴져도 습관처럼 지키는 것이 필요합니다.',
+        readingKm: 'ក្នុងពេលធ្វើការនៅក្រុមហ៊ុន ការគោរពបទបញ្ជាសុវត្ថិភាពឧស្សាហកម្មសំខាន់ណាស់។ ប្រសិនបើមិនពាក់ឧបករណ៍ការពារ ឬមិនអើពើនឹងការណែនាំ អាចមានគ្រោះថ្នាក់ធំ។ ទោះបីដំបូងមានអារម្មណ៍មិនស្រួលក៏ដោយ ក៏ចាំបាច់ត្រូវអនុវត្តឲ្យក្លាយជាទម្លាប់។',
+        question: '이 글에서 강조하는 것은 무엇입니까?',
+        questionKm: 'តើអត្ថបទនេះសង្កត់ធ្ងន់លើអ្វី?',
+        romanization: 'I geureseo gangjohaneun geoseun mueosimnikka?',
+        options: [
+          { ko: '일이 바쁘면 규칙을 안 지켜도 된다', km: 'បើរវល់ការងារ មិនគោរពក្បួនក៏បាន' },
+          { ko: '안전 수칙은 습관처럼 지켜야 한다', km: 'បទបញ្ជាសុវត្ថិភាពត្រូវគោរពដូចជាទម្លាប់' },
+          { ko: '보호 장비는 겨울에만 필요하다', km: 'ឧបករណ៍ការពារចាំបាច់តែរដូវរងា' },
+          { ko: '안내를 무시해도 괜찮다', km: 'មិនអើពើការណែនាំក៏មិនអី' }
+        ],
+        answer: 1,
+        explanation: '안전 수칙을 습관처럼 꾸준히 지키는 것이 중요하다고 말합니다.',
+        explanationKm: 'អត្ថបទបញ្ជាក់ថា សារៈសំខាន់គឺការគោរពបទបញ្ជាសុវត្ថិភាពជាប្រចាំដូចជាទម្លាប់។',
+        vocab: [
+          ['산업 안전 수칙', 'បទបញ្ជាសុវត្ថិភាពឧស្សាហកម្ម'],
+          ['보호 장비', 'ឧបករណ៍ការពារ'],
+          ['무시하다', 'មិនអើពើ']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '위 글의 내용으로 맞는 것은 무엇입니까?',
+        readingKm: 'តាមអត្ថបទខាងលើ តើមួយណាត្រឹមត្រូវ?',
+        question: '알맞은 것을 고르십시오.',
+        questionKm: 'ជ្រើសរើសចម្លើយត្រឹមត្រូវ។',
+        romanization: 'Almateun geoseul goreusipsio.',
+        options: [
+          { ko: '보호 장비를 착용하면 사고를 막는 데 도움이 된다', km: 'ការពាក់ឧបករណ៍ការពារជួយទប់ស្កាត់គ្រោះថ្នាក់' },
+          { ko: '처음 불편하면 하지 않아도 된다', km: 'បើដំបូងមិនស្រួល អាចមិនធ្វើក៏បាន' },
+          { ko: '안전 수칙은 선택 사항이다', km: 'បទបញ្ជាសុវត្ថិភាពជាជម្រើសប៉ុណ្ណោះ' },
+          { ko: '안내는 나중에 읽어도 된다', km: 'ការណែនាំអាចអានពេលក្រោយបាន' }
+        ],
+        answer: 0,
+        explanation: '보호 장비와 안전 수칙은 사고 예방에 도움이 됩니다.',
+        explanationKm: 'ឧបករណ៍ការពារ និងបទបញ្ជាសុវត្ថិភាពជួយការពារគ្រោះថ្នាក់។',
+        vocab: [
+          ['착용하다', 'ពាក់/ស្លៀក'],
+          ['예방', 'ការបង្ការ']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '요즘은 인터넷이나 스마트폰을 통해 생활 법령 정보를 쉽게 찾을 수 있습니다. 외국인도 다국어 서비스를 이용하면 체류, 노동, 교육, 의료 등 필요한 정보를 빠르게 확인할 수 있습니다.',
+        readingKm: 'សព្វថ្ងៃនេះ អាចស្វែងរកព័ត៌មានច្បាប់សម្រាប់ជីវិតប្រចាំថ្ងៃបានយ៉ាងងាយតាមអ៊ីនធឺណិត ឬទូរស័ព្ទឆ្លាតវៃ។ ជនបរទេសក៏អាចប្រើសេវាច្រើនភាសា ដើម្បីពិនិត្យព័ត៌មានចាំបាច់អំពីការស្នាក់នៅ ការងារ ការអប់រំ និងសុខាភិបាលបានយ៉ាងលឿន។',
+        question: '이 글에서 알 수 있는 사실은 무엇입니까?',
+        questionKm: 'តើយើងអាចដឹងការពិតអ្វីពីអត្ថបទនេះ?',
+        romanization: 'I geureseo al su inneun sasireun mueosimnikka?',
+        options: [
+          { ko: '생활 법령 정보는 찾기 어렵다', km: 'ព័ត៌មានច្បាប់ក្នុងជីវិតពិបាករក' },
+          { ko: '다국어 서비스를 이용하면 필요한 정보를 확인할 수 있다', km: 'ប្រើសេវាច្រើនភាសា អាចពិនិត្យព័ត៌មានចាំបាច់បាន' },
+          { ko: '외국인은 정보를 볼 수 없다', km: 'ជនបរទេសមិនអាចមើលព័ត៌មានបាន' },
+          { ko: '스마트폰은 법과 관계없다', km: 'ទូរស័ព្ទឆ្លាតមិនពាក់ព័ន្ធនឹងច្បាប់ទេ' }
+        ],
+        answer: 1,
+        explanation: '본문은 다국어 서비스를 통해 외국인도 필요한 법령 정보를 확인할 수 있다고 설명합니다.',
+        explanationKm: 'អត្ថបទពន្យល់ថា តាមរយៈសេវាច្រើនភាសា ជនបរទេសក៏អាចពិនិត្យព័ត៌មានច្បាប់ចាំបាច់បាន។',
+        vocab: [
+          ['다국어 서비스', 'សេវាច្រើនភាសា'],
+          ['체류', 'ការស្នាក់នៅ'],
+          ['의료', 'សុខាភិបាល']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '위 글의 제목으로 가장 적절한 것은 무엇입니까?',
+        readingKm: 'តើចំណងជើងណាសមស្របបំផុតសម្រាប់អត្ថបទនេះ?',
+        question: '가장 알맞은 제목을 고르십시오.',
+        questionKm: 'ជ្រើសរើសចំណងជើងដែលសមស្របបំផុត។',
+        romanization: 'Gajang almateun jemogeul goreusipsio.',
+        options: [
+          { ko: '찾기 쉬운 생활 법령 정보', km: 'ព័ត៌មានច្បាប់សម្រាប់ជីវិតដែលងាយស្វែងរក' },
+          { ko: '한국 음식 만들기', km: 'ធ្វើម្ហូបកូរ៉េ' },
+          { ko: '여행 짐 싸는 방법', km: 'វិធីរៀបចំឥវ៉ាន់ដំណើរ' },
+          { ko: '병원 예약이 어려운 이유', km: 'មូលហេតុដែលកក់មន្ទីរពេទ្យពិបាក' }
+        ],
+        answer: 0,
+        explanation: '본문 전체가 생활 법령 정보를 쉽게 찾는 방법과 장점을 말합니다.',
+        explanationKm: 'អត្ថបទទាំងមូលនិយាយអំពីវិធីស្វែងរកព័ត៌មានច្បាប់ក្នុងជីវិតឲ្យងាយ និងអត្ថប្រយោជន៍របស់វា។',
+        vocab: [
+          ['적절하다', 'សមស្រប'],
+          ['장점', 'អត្ថប្រយោជន៍']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '현우 씨는 중고 물건을 인터넷으로 샀는데, 판매자가 약속한 제품과 다른 물건을 보냈습니다. 현우 씨는 먼저 판매자에게 연락해서 교환이나 환불이 가능한지 물어보았습니다. 해결이 되지 않으면 소비자 상담 기관에 문의할 생각입니다.',
+        readingKm: 'លោកហ្យុនអ៊ូបានទិញរបស់មួយតាមអ៊ីនធឺណិត ប៉ុន្តែអ្នកលក់បានផ្ញើរបស់ខុសពីអ្វីដែលបានសន្យា។ គាត់បានទាក់ទងអ្នកលក់ជាមុន ដើម្បីសួរថាអាចប្តូរ ឬសងប្រាក់វិញបានឬអត់។ ប្រសិនបើមិនអាចដោះស្រាយបាន គាត់គ្រោងសួរទៅស្ថាប័នពិគ្រោះអ្នកប្រើប្រាស់។',
+        question: '현우 씨가 먼저 한 일은 무엇입니까?',
+        questionKm: 'តើអ្វីជារឿងដែលលោកហ្យុនអ៊ូបានធ្វើមុនគេ?',
+        romanization: 'Hyeonu ssiga meonjeo han ireun mueosimnikka?',
+        options: [
+          { ko: '경찰에 신고했다', km: 'រាយការណ៍ទៅប៉ូលិស' },
+          { ko: '판매자에게 연락했다', km: 'ទាក់ទងអ្នកលក់' },
+          { ko: '물건을 버렸다', km: 'បោះចោលរបស់' },
+          { ko: '친구에게 선물했다', km: 'ឲ្យជាកាដូមិត្ត' }
+        ],
+        answer: 1,
+        explanation: '본문에 “먼저 판매자에게 연락해서...”라고 되어 있습니다.',
+        explanationKm: 'ក្នុងអត្ថបទមាននិយាយថា “ជាមុន គាត់បានទាក់ទងអ្នកលក់...”។',
+        vocab: [
+          ['중고 물건', 'របស់ប្រើហើយ'],
+          ['교환', 'ប្តូរ'],
+          ['환불', 'សងប្រាក់វិញ'],
+          ['문의하다', 'សាកសួរ']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '위 글의 내용과 같은 것은 무엇입니까?',
+        readingKm: 'តើមួយណាត្រូវនឹងខ្លឹមសារអត្ថបទខាងលើ?',
+        question: '맞는 것을 고르십시오.',
+        questionKm: 'ជ្រើសរើសចម្លើយត្រឹមត្រូវ។',
+        romanization: 'Matneun geoseul goreusipsio.',
+        options: [
+          { ko: '현우 씨는 물건을 받고 바로 버렸다', km: 'ហ្យុនអ៊ូទទួលរបស់ហើយបោះចោលភ្លាម' },
+          { ko: '판매자가 약속한 제품과 다른 물건을 보냈다', km: 'អ្នកលក់បានផ្ញើរបស់ខុសពីអ្វីដែលសន្យា' },
+          { ko: '현우 씨는 아무에게도 말하지 않았다', km: 'ហ្យុនអ៊ូមិនបាននិយាយជាមួយនរណាទេ' },
+          { ko: '이미 모든 문제가 해결되었다', km: 'បញ្ហាទាំងអស់ត្រូវបានដោះស្រាយរួចហើយ' }
+        ],
+        answer: 1,
+        explanation: '글의 첫 문장에 나온 내용입니다.',
+        explanationKm: 'នេះជាមាតិកានៅប្រយោគដំបូងនៃអត្ថបទ។',
+        vocab: [
+          ['제품', 'ផលិតផល'],
+          ['약속하다', 'សន្យា']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '많은 사람들은 법을 어렵고 멀게 느끼지만, 생활 속에서 법은 아주 가까운 존재입니다. 집을 계약할 때, 일을 시작할 때, 병원에서 치료를 받을 때도 법과 관련된 정보가 필요합니다.',
+        readingKm: 'មនុស្សជាច្រើនមានអារម្មណ៍ថាច្បាប់ពិបាក និងឆ្ងាយ ប៉ុន្តែក្នុងជីវិតប្រចាំថ្ងៃ ច្បាប់ជារឿងជិតស្និទ្ធណាស់។ ពេលជួលផ្ទះ ពេលចាប់ផ្តើមការងារ ឬពេលទទួលការព្យាបាលនៅមន្ទីរពេទ្យ ក៏ត្រូវការព័ត៌មានដែលទាក់ទងនឹងច្បាប់ដែរ។',
+        question: '이 글의 주제로 가장 알맞은 것은 무엇입니까?',
+        questionKm: 'តើប្រធានបទណាសមស្របបំផុតសម្រាប់អត្ថបទនេះ?',
+        romanization: 'I geurui jujero gajang almateun geoseun mueosimnikka?',
+        options: [
+          { ko: '법은 일상생활과 가깝다', km: 'ច្បាប់ជិតស្និទ្ធនឹងជីវិតប្រចាំថ្ងៃ' },
+          { ko: '병원은 계약만 한다', km: 'មន្ទីរពេទ្យធ្វើតែកិច្ចសន្យា' },
+          { ko: '일을 시작하면 법이 사라진다', km: 'ពេលចាប់ផ្តើមការងារ ច្បាប់បាត់ទៅ' },
+          { ko: '법은 학생에게만 필요하다', km: 'ច្បាប់ចាំបាច់សម្រាប់តែសិស្ស' }
+        ],
+        answer: 0,
+        explanation: '핵심은 법이 생각보다 우리의 생활 가까이에 있다는 점입니다.',
+        explanationKm: 'ចំណុចសំខាន់គឺ ច្បាប់ស្ថិតនៅជិតជីវិតយើងជាងអ្វីដែលមនុស្សជាច្រើនគិត។',
+        vocab: [
+          ['멀게 느끼다', 'មានអារម្មណ៍ថាឆ្ងាយ'],
+          ['존재', 'អត្ថិភាព/វត្តមាន'],
+          ['관련되다', 'ពាក់ព័ន្ធ']
+        ]
+      },
+      {
+        section: 'ការអានយល់ន័យ',
+        type: 'reading',
+        reading: '위 글의 내용으로 알 수 없는 것은 무엇입니까?',
+        readingKm: 'តើមួយណាមិនអាចដឹងពីអត្ថបទនេះ?',
+        question: '고르십시오.',
+        questionKm: 'សូមជ្រើសរើស។',
+        romanization: 'Goreusipsio.',
+        options: [
+          { ko: '집을 계약할 때 법률 정보가 필요할 수 있다', km: 'ពេលជួលផ្ទះ អាចត្រូវការព័ត៌មានច្បាប់' },
+          { ko: '병원 치료와도 법이 관련될 수 있다', km: 'ការព្យាបាលនៅមន្ទីរពេទ្យក៏អាចពាក់ព័ន្ធនឹងច្បាប់' },
+          { ko: '많은 사람이 법을 어렵게 느낀다', km: 'មនុស្សជាច្រើនមានអារម្មណ៍ថាច្បាប់ពិបាក' },
+          { ko: '법은 시험 문제로만 존재한다', km: 'ច្បាប់មានតែជាសំណួរប្រឡងប៉ុណ្ណោះ' }
+        ],
+        answer: 3,
+        explanation: '법이 시험 문제로만 존재한다는 말은 글에 없고, 오히려 생활과 가깝다고 했습니다.',
+        explanationKm: 'អត្ថបទមិនបាននិយាយថាច្បាប់មានតែជាសំណួរប្រឡងទេ តែផ្ទុយទៅវិញ និយាយថាវាជិតជីវិតប្រចាំថ្ងៃ។',
+        vocab: [
+          ['오히려', 'ផ្ទុយទៅវិញ'],
+          ['존재하다', 'មានវត្តមាន']
+        ]
+      },
+
+      {
+        section: 'វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ',
+        type: 'culture',
+        question: '“찾기 쉬운 생활 법령 정보” 서비스의 목적은 무엇입니까?',
+        questionKm: 'តើគោលបំណងនៃសេវា “ព័ត៌មានច្បាប់សម្រាប់ជីវិតដែលងាយស្វែងរក” គឺអ្វី?',
+        romanization: '“Chatgi swiun saenghwal beomnyeong jeongbo” seobiseuui mokjeogeun mueosimnikka?',
+        options: [
+          { ko: '일상생활에 필요한 법 정보를 쉽게 제공하기 위해서', km: 'ដើម្បីផ្តល់ព័ត៌មានច្បាប់ដែលត្រូវការក្នុងជីវិតប្រចាំថ្ងៃឲ្យងាយយល់' },
+          { ko: '운동 방법을 알려 주기 위해서', km: 'ដើម្បីបង្រៀនវិធីហាត់ប្រាណ' },
+          { ko: '요리법만 소개하기 위해서', km: 'ដើម្បីណែនាំតែរូបមន្តម្ហូប' },
+          { ko: '게임 순위를 보여 주기 위해서', km: 'ដើម្បីបង្ហាញចំណាត់ថ្នាក់ហ្គេម' }
+        ],
+        answer: 0,
+        explanation: '이 서비스는 생활 속 법령을 일반인도 쉽게 찾고 이해할 수 있도록 만든 정보 서비스입니다.',
+        explanationKm: 'សេវានេះត្រូវបានបង្កើតឡើង ដើម្បីឲ្យប្រជាជនទូទៅស្វែងរក និងយល់ព័ត៌មានច្បាប់ក្នុងជីវិតប្រចាំថ្ងៃបានងាយ។',
+        vocab: [
+          ['목적', 'គោលបំណង'],
+          ['제공하다', 'ផ្តល់ឲ្យ'],
+          ['일반인', 'ប្រជាជនទូទៅ']
+        ]
+      },
+      {
+        section: 'វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ',
+        type: 'culture',
+        question: '이 서비스에서 주로 찾을 수 있는 정보로 알맞은 것은 무엇입니까?',
+        questionKm: 'តើមួយណាជាព័ត៌មានដែលអាចស្វែងរកបានជាញឹកញាប់ក្នុងសេវានេះ?',
+        romanization: 'I seobiseueseo juro chajeul su inneun jeongbouro almateun geoseun mueosimnikka?',
+        options: [
+          { ko: '주거, 노동, 가족, 소비 생활 관련 법 정보', km: 'ព័ត៌មានច្បាប់ពាក់ព័ន្ធនឹងការស្នាក់នៅ ការងារ គ្រួសារ និងជីវិតអ្នកប្រើប្រាស់' },
+          { ko: '연예인 사생활 정보', km: 'ព័ត៌មានជីវិតឯកជនតារា' },
+          { ko: '축구 경기 결과만', km: 'តែលទ្ធផលបាល់ទាត់' },
+          { ko: '날씨 예보만', km: 'តែការព្យាករអាកាសធាតុ' }
+        ],
+        answer: 0,
+        explanation: '생활 법령 정보는 실제 생활과 밀접한 법적 내용을 다룹니다.',
+        explanationKm: 'ព័ត៌មានច្បាប់ជីវិតគ្របដណ្តប់លើមាតិកាច្បាប់ដែលពាក់ព័ន្ធជិតស្និទ្ធនឹងជីវិតពិត។',
+        vocab: [
+          ['밀접하다', 'ពាក់ព័ន្ធជិតស្និទ្ធ'],
+          ['소비 생활', 'ជីវិតអ្នកប្រើប្រាស់']
+        ]
+      },
+      {
+        section: 'វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ',
+        type: 'culture',
+        question: '한국 사회에서 법과 질서를 지키는 태도가 중요한 이유로 가장 알맞은 것은 무엇입니까?',
+        questionKm: 'តើមួយណាជាមូលហេតុសមស្របបំផុតដែលសង្គមកូរ៉េឲ្យសារៈសំខាន់លើការគោរពច្បាប់ និងសណ្តាប់ធ្នាប់?',
+        romanization: 'Hanguk sahoeeseo beopgwa jilseoreul jikineun taedoga jungyohan iyuro gajang almateun geoseun mueosimnikka?',
+        options: [
+          { ko: '모두의 안전과 권리를 보호하기 위해서', km: 'ដើម្បីការពារសុវត្ថិភាព និងសិទ្ធិរបស់មនុស្សទាំងអស់' },
+          { ko: '사람들을 더 바쁘게 만들기 위해서', km: 'ដើម្បីធ្វើឲ្យមនុស្សរវល់ជាងមុន' },
+          { ko: '벌금을 더 많이 받기 위해서', km: 'ដើម្បីប្រមូលពិន័យឲ្យបានច្រើន' },
+          { ko: '외국인을 불편하게 하기 위해서', km: 'ដើម្បីធ្វើឲ្យជនបរទេសមិនស្រួល' }
+        ],
+        answer: 0,
+        explanation: '법과 질서는 안전하고 공정한 사회를 유지하기 위한 기본입니다.',
+        explanationKm: 'ច្បាប់ និងសណ្តាប់ធ្នាប់គឺជាមូលដ្ឋានសម្រាប់រក្សាសង្គមឲ្យមានសុវត្ថិភាព និងយុត្តិធម៌។',
+        vocab: [
+          ['권리', 'សិទ្ធិ'],
+          ['공정한 사회', 'សង្គមយុត្តិធម៌'],
+          ['유지하다', 'រក្សា']
+        ]
+      },
+      {
+        section: 'វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ',
+        type: 'culture',
+        question: '외국인이 한국에서 생활할 때 법률 정보가 필요할 수 있는 경우로 적절하지 않은 것은 무엇입니까?',
+        questionKm: 'តើមួយណាមិនសមស្របជាករណីដែលជនបរទេសអាចត្រូវការព័ត៌មានច្បាប់នៅកូរ៉េ?',
+        romanization: 'Oegugini hangugeseo saenghwalhal ttae beomnyul jeongboga piryohal su inneun gyeonguro jeokjeolhaji aneun geoseun mueosimnikka?',
+        options: [
+          { ko: '근로계약서를 작성할 때', km: 'ពេលសរសេរកិច្ចសន្យាការងារ' },
+          { ko: '전세나 월세 계약을 할 때', km: 'ពេលធ្វើកិច្ចសន្យាជួលផ្ទះ' },
+          { ko: '휴대전화 요금 문제를 확인할 때', km: 'ពេលពិនិត្យបញ្ហាថ្លៃទូរស័ព្ទ' },
+          { ko: '좋아하는 가수의 노래를 들을 때', km: 'ពេលស្តាប់ចម្រៀងតារាដែលចូលចិត្ត' }
+        ],
+        answer: 3,
+        explanation: '나머지는 생활 속 법률 정보가 필요할 수 있는 상황이지만, 노래 듣기는 직접적인 법률 정보 상황이 아닙니다.',
+        explanationKm: 'ជម្រើសផ្សេងទៀតសុទ្ធតែជាស្ថានការណ៍ដែលអាចត្រូវការព័ត៌មានច្បាប់ក្នុងជីវិត ប៉ុន្តែការស្តាប់ចម្រៀងមិនមែនជាស្ថានភាពច្បាប់ដោយផ្ទាល់ទេ។',
+        vocab: [
+          ['근로계약서', 'កិច្ចសន្យាការងារ'],
+          ['전세', 'ជួលផ្ទះបង់ប្រាក់ធំម្តង'],
+          ['월세', 'ជួលផ្ទះបង់ប្រចាំខែ']
+        ]
+      },
+      {
+        section: 'វប្បធម៌ និងចំណេះដឹងសង្គមកូរ៉េ',
+        type: 'culture',
+        question: '생활 법령 정보를 잘 활용하면 얻을 수 있는 장점으로 가장 알맞은 것은 무엇입니까?',
+        questionKm: 'តើមួយណាជាអត្ថប្រយោជន៍សមស្របបំផុតដែលអាចទទួលបាន ប្រសិនបើប្រើព័ត៌មានច្បាប់ជីវិតឲ្យបានល្អ?',
+        romanization: 'Saenghwal beomnyeong jeongboreul jal hwaryonghamyeon eodeul su inneun jangjeomeuro gajang almateun geoseun mueosimnikka?',
+        options: [
+          { ko: '문제를 미리 예방하고 필요한 도움을 받을 수 있다', km: 'អាចបង្ការបញ្ហាមុន និងទទួលជំនួយដែលត្រូវការ' },
+          { ko: '시험을 보지 않아도 된다', km: 'មិនចាំបាច់ប្រឡងទេ' },
+          { ko: '모든 벌금을 없앨 수 있다', km: 'អាចលុបពិន័យទាំងអស់បាន' },
+          { ko: '일을 하지 않아도 된다', km: 'មិនចាំបាច់ធ្វើការទេ' }
+        ],
+        answer: 0,
+        explanation: '정확한 법령 정보는 문제 예방과 권리 보호에 큰 도움이 됩니다.',
+        explanationKm: 'ព័ត៌មានច្បាប់ត្រឹមត្រូវជួយយ៉ាងខ្លាំងក្នុងការបង្ការបញ្ហា និងការពារសិទ្ធិ។',
+        vocab: [
+          ['활용하다', 'ប្រើប្រាស់ឲ្យមានប្រសិទ្ធភាព'],
+          ['예방하다', 'បង្ការ'],
+          ['보호', 'ការពារ']
+        ]
+      }
+    ];
+
+    window.smartSpeak = (function(){
+      let audio = null;
+      let currentText = '';
+      let currentLang = 'ko-KR';
+      let usingSpeech = false;
+
+      function stopSpeechSynthesis(){
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+      }
+
+      function speakWithWebSpeech(text, lang){
+        usingSpeech = true;
+        stopSpeechSynthesis();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = lang || 'ko-KR';
+        utter.rate = 0.95;
+        utter.pitch = 1;
+        window.speechSynthesis.speak(utter);
+      }
+
+      function googleTTSUrl(text, lang){
+        const tl = (lang === 'km-KH') ? 'km' : 'ko';
+        return 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=' + tl + '&q=' + encodeURIComponent(text);
+      }
+
+      return function(text, lang='ko-KR'){
+        if (!text) return;
+
+        if (audio && !audio.paused && currentText === text && currentLang === lang && !usingSpeech) {
+          audio.pause();
+          return;
+        }
+        if (audio && audio.paused && currentText === text && currentLang === lang && !usingSpeech) {
+          audio.play().catch(()=>speakWithWebSpeech(text, lang));
+          return;
+        }
+
+        stopSpeechSynthesis();
+        if (audio) {
+          audio.pause();
+          audio = null;
+        }
+
+        currentText = text;
+        currentLang = lang;
+        usingSpeech = false;
+
+        try{
+          audio = new Audio(googleTTSUrl(text, lang));
+          audio.play().catch(() => {
+            speakWithWebSpeech(text, lang);
+          });
+          audio.onerror = () => {
+            speakWithWebSpeech(text, lang);
+          };
+        }catch(e){
+          speakWithWebSpeech(text, lang);
+        }
+      };
+    })();
+
+    const quizManager = {
+      currentIndex: 0,
+      score: 0,
+      selectedAnswer: null,
+      answered: false,
+      answers: [],
+      usedHints: {},
+      reviewMode: false,
+
+      start() {
+        this.currentIndex = 0;
+        this.score = 0;
+        this.selectedAnswer = null;
+        this.answered = false;
+        this.answers = [];
+        this.usedHints = {};
+        this.reviewMode = false;
+        document.getElementById('startScreen').classList.add('hidden');
+        document.getElementById('quizScreen').classList.remove('hidden');
+        document.getElementById('resultScreen').classList.add('hidden');
+        this.render();
+      },
+
+      render() {
+        const q = quizData[this.currentIndex];
+        this.selectedAnswer = null;
+        this.answered = false;
+        this.usedHints[this.currentIndex] = {
+          questionTranslated: false,
+          optionsTranslated: false,
+          fifty: false,
+          removed: []
+        };
+
+        document.getElementById('sectionLabel').textContent = q.section;
+        document.getElementById('questionCounter').textContent = `Question ${this.currentIndex + 1}`;
+        document.getElementById('progressBadge').textContent = `${this.currentIndex + 1} / ${quizData.length}`;
+        document.getElementById('scoreBadge').textContent = `Score: ${this.score}`;
+        document.getElementById('progressBar').style.width = `${((this.currentIndex) / quizData.length) * 100}%`;
+
+        const readingBox = document.getElementById('readingBox');
+        if (q.reading) {
+          readingBox.classList.remove('hidden-soft');
+          readingBox.innerHTML = `
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="text-sm text-yellow-400 font-bold mb-2">지문</div>
+                <div class="leading-8 whitespace-pre-line">${q.reading}</div>
+              </div>
+              <div class="flex gap-2 shrink-0">
+                <button class="speaker-btn" onclick="window.smartSpeak(${JSON.stringify(q.reading)}, 'ko-KR')">🔊</button>
+                <button class="speaker-btn" onclick="window.smartSpeak(${JSON.stringify(q.readingKm || '')}, 'km-KH')">🈁</button>
+              </div>
+            </div>
+            <div class="hidden-soft mt-3 text-muted leading-7" id="readingTranslation">${q.readingKm || ''}</div>
+          `;
+        } else {
+          readingBox.classList.add('hidden-soft');
+          readingBox.innerHTML = '';
+        }
+
+        document.getElementById('questionText').innerHTML = q.question;
+        document.getElementById('questionTranslation').textContent = q.questionKm || '';
+        document.getElementById('questionTranslation').classList.add('hidden-soft');
+        document.getElementById('questionRomanization').textContent = q.romanization || '';
+        document.getElementById('questionRomanization').classList.add('hidden-soft');
+
+        document.getElementById('questionSpeakKo').onclick = () => window.smartSpeak([q.reading, q.question].filter(Boolean).join(' '), 'ko-KR');
+        document.getElementById('questionSpeakKm').onclick = () => window.smartSpeak([q.readingKm, q.questionKm].filter(Boolean).join(' '), 'km-KH');
+
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+        q.options.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn w-full text-left rounded-xl p-4';
+          btn.dataset.index = idx;
+          btn.innerHTML = `
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <div class="font-semibold leading-7">${idx + 1}. ${opt.ko}</div>
+                <div class="option-km hidden-soft text-sm text-muted mt-1">${opt.km || ''}</div>
+              </div>
+              <div class="flex gap-2 shrink-0">
+                <button class="speaker-btn" onclick="event.stopPropagation(); window.smartSpeak(${JSON.stringify(opt.ko)}, 'ko-KR')">🔊</button>
+                <button class="speaker-btn" onclick="event.stopPropagation(); window.smartSpeak(${JSON.stringify(opt.km || '')}, 'km-KH')">🈁</button>
+              </div>
+            </div>
+          `;
+          btn.onclick = () => this.selectOption(idx);
+          optionsContainer.appendChild(btn);
+        });
+
+        document.getElementById('answerArea').classList.add('hidden-soft');
+        document.getElementById('nextBtn').classList.add('hidden-soft');
+        document.getElementById('checkBtn').classList.remove('hidden-soft');
+        document.getElementById('checkBtn').disabled = false;
+        document.getElementById('checkBtn').classList.remove('opacity-50');
+        this.resetHintButtons();
+      },
+
+      selectOption(idx) {
+        if (this.answered) return;
+        this.selectedAnswer = idx;
+        const optionButtons = document.querySelectorAll('.option-btn');
+        optionButtons.forEach(btn => btn.classList.remove('ring-2','ring-yellow-400'));
+        const active = [...optionButtons].find(btn => Number(btn.dataset.index) === idx);
+        if (active) active.classList.add('ring-2','ring-yellow-400');
+      },
+
+      check() {
+        if (this.selectedAnswer === null || this.answered) return;
+        const q = quizData[this.currentIndex];
+        const isCorrect = this.selectedAnswer === q.answer;
+        this.answered = true;
+        if (isCorrect) this.score++;
+
+        this.answers.push({
+          index: this.currentIndex,
+          selected: this.selectedAnswer,
+          correct: q.answer,
+          isCorrect
+        });
+
+        const optionButtons = document.querySelectorAll('.option-btn');
+        optionButtons.forEach(btn => {
+          const idx = Number(btn.dataset.index);
+          btn.onclick = null;
+          if (idx === q.answer) btn.classList.add('correct');
+          if (idx === this.selectedAnswer && idx !== q.answer) btn.classList.add('incorrect');
+        });
+
+        const resultMessage = document.getElementById('resultMessage');
+        resultMessage.textContent = isCorrect ? 'ត្រឹមត្រូវ!' : 'មិនទាន់ត្រឹមត្រូវទេ';
+        resultMessage.className = `text-lg font-bold mb-3 ${isCorrect ? 'text-emerald-400' : 'text-rose-400'}`;
+
+        const vocabHtml = (q.vocab || []).map(item => `<li><b>${item[0]}</b> : ${item[1]}</li>`).join('');
+        document.getElementById('fullExplanation').innerHTML = `
+          ${q.reading ? `<div><b class="text-yellow-400">បកប្រែអត្ថបទ:</b><div class="text-muted mt-1 leading-7">${q.readingKm || ''}</div></div>` : ''}
+          <div><b class="text-yellow-400">បកប្រែសំណួរ:</b><div class="text-muted mt-1 leading-7">${q.questionKm || ''}</div></div>
+          <div><b class="text-yellow-400">របៀបអាន:</b><div class="text-slate-400 mt-1">${q.romanization || ''}</div></div>
+          <div><b class="text-yellow-400">ការពន្យល់:</b><div class="text-white mt-1">${q.explanation}</div><div class="text-muted mt-1">${q.explanationKm}</div></div>
+          <div><b class="text-yellow-400">ពន្យល់ពាក្យសំខាន់ៗ:</b><ul class="list-disc pl-5 mt-1 text-slate-300 space-y-1">${vocabHtml}</ul></div>
+        `;
+        document.getElementById('answerArea').classList.remove('hidden-soft');
+        document.getElementById('questionTranslation').classList.remove('hidden-soft');
+        document.getElementById('questionRomanization').classList.remove('hidden-soft');
+        const readingTranslation = document.getElementById('readingTranslation');
+        if (readingTranslation) readingTranslation.classList.remove('hidden-soft');
+        document.querySelectorAll('.option-km').forEach(el => el.classList.remove('hidden-soft'));
+
+        document.getElementById('scoreBadge').textContent = `Score: ${this.score}`;
+        document.getElementById('checkBtn').classList.add('hidden-soft');
+        document.getElementById('nextBtn').classList.remove('hidden-soft');
+        document.getElementById('progressBar').style.width = `${((this.currentIndex + 1) / quizData.length) * 100}%`;
+      },
+
+      next() {
+        if (!this.answered) return;
+        this.currentIndex++;
+        if (this.currentIndex < quizData.length) {
+          this.render();
+        } else {
+          this.showResult();
+        }
+      },
+
+      showResult() {
+        document.getElementById('quizScreen').classList.add('hidden');
+        document.getElementById('resultScreen').classList.remove('hidden');
+        document.getElementById('finalScore').textContent = `${this.score}/${quizData.length}`;
+        document.getElementById('correctCount').textContent = this.score;
+        document.getElementById('percentageScore').textContent = `${Math.round((this.score / quizData.length) * 100)}%`;
+        document.getElementById('progressBadge').textContent = `${quizData.length} / ${quizData.length}`;
+        document.getElementById('scoreBadge').textContent = `Score: ${this.score}`;
+        document.getElementById('progressBar').style.width = '100%';
+      },
+
+      showReview() {
+        const reviewContainer = document.getElementById('reviewContainer');
+        reviewContainer.classList.remove('hidden-soft');
+        reviewContainer.innerHTML = '';
+
+        quizData.forEach((q, i) => {
+          const userAns = this.answers.find(a => a.index === i);
+          const vocabHtml = (q.vocab || []).map(item => `<li><b>${item[0]}</b> : ${item[1]}</li>`).join('');
+          const item = document.createElement('div');
+          item.className = 'review-item p-4 rounded-xl bg-[#101728] border border-slate-700';
+          item.innerHTML = `
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <div class="text-yellow-400 font-bold">${i + 1}. ${q.section}</div>
+                <div class="mt-1 leading-7">${q.question}</div>
+                <div class="text-muted mt-2">${q.questionKm || ''}</div>
+              </div>
+              <div class="flex gap-2 shrink-0">
+                <button class="speaker-btn" onclick="window.smartSpeak(${JSON.stringify(q.question)}, 'ko-KR')">🔊</button>
+                <button class="speaker-btn" onclick="window.smartSpeak(${JSON.stringify(q.questionKm || '')}, 'km-KH')">🈁</button>
+              </div>
+            </div>
+
+            ${q.reading ? `
+              <div class="mb-3 p-3 rounded-lg explain-box">
+                <div class="font-semibold mb-1">지문</div>
+                <div class="whitespace-pre-line leading-7">${q.reading}</div>
+                <div class="text-muted mt-2 leading-7">${q.readingKm || ''}</div>
+              </div>
+            ` : ''}
+
+            <div class="space-y-2 mb-3">
+              ${q.options.map((opt, idx) => {
+                const isCorrect = idx === q.answer;
+                const isSelected = userAns && idx === userAns.selected;
+                const cls = isCorrect ? 'border-emerald-500 bg-emerald-500/10' : (isSelected ? 'border-rose-500 bg-rose-500/10' : 'border-slate-700 bg-[#161B2E]');
+                return `
+                  <div class="p-3 rounded-lg border ${cls}">
+                    <div><b>${idx + 1}. ${opt.ko}</b></div>
+                    <div class="text-muted text-sm mt-1">${opt.km || ''}</div>
+                  </div>
                 `;
+              }).join('')}
+            </div>
 
-                const letters = ['①', '②', '③', '④'];
-                const optionStates = [false, false, false, false];
+            <div class="grid md:grid-cols-2 gap-3 text-sm">
+              <div class="p-3 rounded-lg explain-box">
+                <b class="text-yellow-400">ចម្លើយរបស់អ្នក</b>
+                <div class="mt-1 ${userAns?.isCorrect ? 'text-emerald-400' : 'text-rose-400'}">
+                  ${userAns ? q.options[userAns.selected].ko : 'មិនបានឆ្លើយ'}
+                </div>
+              </div>
+              <div class="p-3 rounded-lg explain-box">
+                <b class="text-yellow-400">ចម្លើយត្រឹមត្រូវ</b>
+                <div class="mt-1 text-emerald-400">${q.options[q.answer].ko}</div>
+              </div>
+            </div>
 
-                if (powerups.fifty) {
-                    const wrongIndices = [];
-                    for (let i = 0; i < q.options.length; i++) {
-                        if (i !== q.correct) wrongIndices.push(i);
-                    }
-                    for (let i = wrongIndices.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [wrongIndices[i], wrongIndices[j]] = [wrongIndices[j], wrongIndices[i]];
-                    }
-                    const hideThese = wrongIndices.slice(0, 2);
-                    hideThese.forEach(idx => { optionStates[idx] = true; });
-                }
+            <div class="mt-3 p-3 rounded-lg explain-box">
+              <b class="text-yellow-400">ការពន្យល់</b>
+              <div class="mt-1">${q.explanation}</div>
+              <div class="mt-1 text-muted">${q.explanationKm}</div>
+            </div>
 
-                for (let i = 0; i < q.options.length; i++) {
-                    const hidden = optionStates[i] ? ' hidden' : '';
-                    html += `
-                        <button class="option-btn${hidden}" data-optindex="${i}" id="opt-${i}">
-                            <span class="letter">${letters[i]}</span>
-                            <span>${q.options[i]}</span>
-                            <span class="opt-translation">${q.optionsTrans[i]}</span>
-                        </button>
-                    `;
-                }
+            <div class="mt-3 p-3 rounded-lg explain-box">
+              <b class="text-yellow-400">ពាក្យសំខាន់ៗ</b>
+              <ul class="list-disc pl-5 mt-1 text-slate-300 space-y-1">${vocabHtml}</ul>
+            </div>
+          `;
+          reviewContainer.appendChild(item);
+        });
+      },
 
-                html += `
-                        </div>
+      resetHintButtons() {
+        const qBtn = document.getElementById('hintTranslateQuestion');
+        const fBtn = document.getElementById('hintFifty');
+        const oBtn = document.getElementById('hintTranslateOptions');
+        qBtn.classList.remove('power-used');
+        fBtn.classList.remove('power-used');
+        oBtn.classList.remove('power-used');
+      },
 
-                        <div class="feedback-box" id="feedbackBox"></div>
+      useTranslateQuestion() {
+        const state = this.usedHints[this.currentIndex];
+        if (state.questionTranslated) return;
+        document.getElementById('questionTranslation').classList.remove('hidden-soft');
+        if (document.getElementById('readingTranslation')) {
+          document.getElementById('readingTranslation').classList.remove('hidden-soft');
+        }
+        state.questionTranslated = true;
+        document.getElementById('hintTranslateQuestion').classList.add('power-used');
+      },
 
-                        <div class="powerup-bar">
-                            <button id="puTranslateQ" class="pu-btn" data-pu="translateQ">
-                                <span class="icon">🌐</span> 번역
-                            </button>
-                            <button id="puFifty" class="pu-btn" data-pu="fifty">
-                                <span class="icon">✂️</span> 50/50
-                            </button>
-                            <button id="puTranslateA" class="pu-btn" data-pu="translateA">
-                                <span class="icon">📖</span> 답변 번역
-                            </button>
-                            <button class="speech-trigger" data-speak="${q.questionTrans.replace(/"/g, '&quot;')}" data-lang="km" aria-label="Listen Khmer">
-                                🔊🇰🇭
-                            </button>
-                        </div>
+      useTranslateOptions() {
+        const state = this.usedHints[this.currentIndex];
+        if (state.optionsTranslated) return;
+        document.querySelectorAll('.option-km').forEach(el => el.classList.remove('hidden-soft'));
+        state.optionsTranslated = true;
+        document.getElementById('hintTranslateOptions').classList.add('power-used');
+      },
 
-                        <div class="nav-row">
-                            <button class="btn-outline" id="prevBtn" ${currentIndex === 0 ? 'disabled' : ''}>◀ 이전</button>
-                            <button class="btn-primary" id="checkBtn" disabled>정답 확인</button>
-                            <button class="btn-primary" id="nextBtn">다음 ▶</button>
-                        </div>
-                    </div>
-                `;
+      useFifty() {
+        const state = this.usedHints[this.currentIndex];
+        if (state.fifty || this.answered) return;
+        const q = quizData[this.currentIndex];
+        const wrongIndexes = q.options.map((_, idx) => idx).filter(idx => idx !== q.answer);
+        const shuffled = wrongIndexes.sort(() => Math.random() - 0.5);
+        const removeTwo = shuffled.slice(0, 2);
+        state.fifty = true;
+        state.removed = removeTwo;
+        document.querySelectorAll('.option-btn').forEach(btn => {
+          const idx = Number(btn.dataset.index);
+          if (removeTwo.includes(idx)) btn.classList.add('disabled-option');
+        });
+        document.getElementById('hintFifty').classList.add('power-used');
+      }
+    };
 
-                quizArea.innerHTML = html;
+    document.getElementById('startBtn').addEventListener('click', () => quizManager.start());
+    document.getElementById('checkBtn').addEventListener('click', () => quizManager.check());
+    document.getElementById('nextBtn').addEventListener('click', () => quizManager.next());
+    document.getElementById('reviewBtn').addEventListener('click', () => quizManager.showReview());
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      document.getElementById('reviewContainer').classList.add('hidden-soft');
+      document.getElementById('startScreen').classList.remove('hidden');
+      document.getElementById('quizScreen').classList.add('hidden');
+      document.getElementById('resultScreen').classList.add('hidden');
+      document.getElementById('progressBadge').textContent = `0 / ${quizData.length}`;
+      document.getElementById('scoreBadge').textContent = `Score: 0`;
+    });
 
-                document.querySelectorAll('.option-btn:not(.hidden)').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        if (answered) return;
-                        const idx = parseInt(this.dataset.optindex);
-                        selectOption(idx);
-                    });
-                    btn.addEventListener('touchstart', function() {
-                        if (!answered) this.style.transform = 'scale(0.97)';
-                    }, { passive: true });
-                    btn.addEventListener('touchend', function() {
-                        this.style.transform = '';
-                    }, { passive: true });
-                });
+    document.getElementById('hintTranslateQuestion').addEventListener('click', () => quizManager.useTranslateQuestion());
+    document.getElementById('hintTranslateOptions').addEventListener('click', () => quizManager.useTranslateOptions());
+    document.getElementById('hintFifty').addEventListener('click', () => quizManager.useFifty());
 
-                document.getElementById('checkBtn').addEventListener('click', checkAnswer);
-                document.getElementById('nextBtn').addEventListener('click', nextQuestion);
-
-                const prevBtn = document.getElementById('prevBtn');
-                if (prevBtn) {
-                    prevBtn.addEventListener('click', function() {
-                        if (currentIndex > 0) {
-                            currentIndex--;
-                            render();
-                        }
-                    });
-                }
-
-                document.querySelectorAll('.pu-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const type = this.dataset.pu;
-                        applyPowerup(type);
-                    });
-                });
-
-                document.querySelectorAll('.speech-trigger').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const text = this.dataset.speak;
-                        const lang = this.dataset.lang || 'ko';
-                        if (text) speakText(text, lang);
-                    });
-                });
-
-                updateCheckButton();
-
-                if (powerups.fifty) {
-                    // already handled in rendering
-                }
-            }
-
-            function selectOption(idx) {
-                if (answered) return;
-                document.querySelectorAll('.option-btn').forEach(b => {
-                    b.classList.remove('correct', 'wrong');
-                    b.style.borderColor = '';
-                });
-                const btn = document.getElementById('opt-' + idx);
-                if (btn && !btn.classList.contains('hidden')) {
-                    btn.style.borderColor = 'var(--primary-color)';
-                    selectedOption = idx;
-                    updateCheckButton();
-                }
-            }
-
-            function updateCheckButton() {
-                const btn = document.getElementById('checkBtn');
-                if (btn) {
-                    btn.disabled = (selectedOption === null || answered);
-                }
-            }
-
-            function checkAnswer() {
-                if (answered || selectedOption === null) return;
-                const q = questions[currentIndex];
-                const isCorrect = (selectedOption === q.correct);
-                if (isCorrect) score++;
-
-                answered = true;
-                const fb = document.getElementById('feedbackBox');
-                const optBtns = document.querySelectorAll('.option-btn:not(.hidden)');
-
-                optBtns.forEach((btn, idx) => {
-                    const realIdx = parseInt(btn.dataset.optindex);
-                    btn.classList.add('disabled');
-                    if (realIdx === q.correct) {
-                        btn.classList.add('correct');
-                    } else if (realIdx === selectedOption && !isCorrect) {
-                        btn.classList.add('wrong');
-                    }
-                    if (!isCorrect && realIdx === q.correct) {
-                        btn.classList.add('reveal-correct');
-                    }
-                    btn.style.borderColor = '';
-                });
-
-                fb.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'wrong');
-                fb.innerHTML = `
-                    <strong>${isCorrect ? '✅ 정답입니다!' : '❌ 오답입니다.'}</strong>
-                    <div style="margin-top:4px;">${q.explanation}</div>
-                    <div class="fb-trans">${q.explanationTrans}</div>
-                `;
-
-                userAnswers[currentIndex] = { selected: selectedOption, correct: isCorrect };
-
-                document.getElementById('checkBtn').disabled = true;
-                scoreDisplay.textContent = score + ' / ' + questions.length;
-            }
-
-            function nextQuestion() {
-                if (currentIndex < questions.length - 1) {
-                    currentIndex++;
-                    render();
-                } else {
-                    renderResults();
-                }
-            }
-
-            function applyPowerup(type) {
-                if (answered) return;
-                if (type === 'translateQ') {
-                    powerups.translateQ = !powerups.translateQ;
-                    const el = document.getElementById('qTrans');
-                    if (el) el.classList.toggle('show');
-                    const btn = document.querySelector('[data-pu="translateQ"]');
-                    if (btn) btn.style.borderColor = powerups.translateQ ? 'var(--primary-color)' : '';
-                } else if (type === 'fifty') {
-                    if (powerups.fifty) return;
-                    powerups.fifty = true;
-                    render();
-                } else if (type === 'translateA') {
-                    powerups.translateA = !powerups.translateA;
-                    document.querySelectorAll('.opt-translation').forEach(el => {
-                        el.classList.toggle('show');
-                    });
-                    const btn = document.querySelector('[data-pu="translateA"]');
-                    if (btn) btn.style.borderColor = powerups.translateA ? 'var(--primary-color)' : '';
-                }
-            }
-
-            // ── Results ──
-            function renderResults() {
-                const total = questions.length;
-                const pct = Math.round((score / total) * 100);
-                progressFill.style.width = '100%';
-
-                let grade = '';
-                let emoji = '';
-                if (pct >= 90) { grade = '우수 (Excellent)';
-                    emoji = '🌟'; } else if (pct >= 70) { grade = '양호 (Good)';
-                    emoji = '👍'; } else if (pct >= 50) { grade = '보통 (Average)';
-                    emoji = '📖'; } else { grade = '복습 필요 (Needs Review)';
-                    emoji = '🔄'; }
-
-                let html = `
-                    <div class="card result-box">
-                        <div class="score-big">${score} / ${total}</div>
-                        <div class="score-label">${pct}% · ${grade} ${emoji}</div>
-                        <div class="result-msg">
-                            ${pct >= 70 ? '🎉 잘하셨습니다! 계속 화이팅!' : '💪 더 열심히 공부해 봅시다!'}
-                        </div>
-                        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
-                            <button class="btn-primary" id="retryBtn" style="flex:1;min-height:48px;">🔄 다시 풀기</button>
-                            <button class="btn-outline" id="reviewToggleBtn" style="flex:1;min-height:48px;">📋 오답 노트</button>
-                        </div>
-                        <div class="review-list hidden" id="reviewList"></div>
-                    </div>
-                `;
-
-                quizArea.innerHTML = html;
-                scoreDisplay.textContent = score + ' / ' + total;
-
-                document.getElementById('retryBtn').addEventListener('click', function() {
-                    resetQuiz();
-                });
-
-                document.getElementById('reviewToggleBtn').addEventListener('click', function() {
-                    const list = document.getElementById('reviewList');
-                    if (list.classList.contains('hidden')) {
-                        list.classList.remove('hidden');
-                        buildReviewList(list);
-                        this.textContent = '📋 닫기';
-                    } else {
-                        list.classList.add('hidden');
-                        this.textContent = '📋 오답 노트';
-                    }
-                });
-            }
-
-            function buildReviewList(container) {
-                container.innerHTML = '';
-                const total = questions.length;
-                for (let i = 0; i < total; i++) {
-                    const q = questions[i];
-                    const ua = userAnswers[i] || { selected: -1, correct: false };
-                    const isCorrect = ua.correct;
-                    const icon = isCorrect ? '✅' : '❌';
-                    const answerText = q.options[ua.selected] || '(미응답)';
-                    const correctText = q.options[q.correct];
-                    const item = document.createElement('div');
-                    item.className = 'review-item';
-                    item.innerHTML = `
-                        <span class="r-icon">${icon}</span>
-                        <span class="r-text">
-                            <strong>${i+1}.</strong> ${q.question.replace(/\n/g, ' ').substring(0, 60)}${q.question.length > 60 ? '…' : ''}
-                            <div class="r-answer">내 답: ${answerText} ${!isCorrect ? ' (정답: ' + correctText + ')' : ''}</div>
-                        </span>
-                    `;
-                    container.appendChild(item);
-                }
-            }
-
-            function resetQuiz() {
-                currentIndex = 0;
-                score = 0;
-                answered = false;
-                userAnswers = [];
-                powerups = { translateQ: false, fifty: false, translateA: false };
-                selectedOption = null;
-                render();
-            }
-
-            render();
-
-            window.__quiz = { speakText, resetQuiz, render };
-
-        })();
-    </script>
-
+    (function autoBindLessonMeta(){
+      document.getElementById('autoLevel').textContent = QUIZ_META.level;
+      document.getElementById('autoLesson').textContent = QUIZ_META.lesson;
+      document.getElementById('autoTitle').textContent = QUIZ_META.titleKo;
+      document.getElementById('autoCulture').textContent = QUIZ_META.culture;
+      document.getElementById('lessonBadge').textContent = `Level ${QUIZ_META.level} · Lesson ${QUIZ_META.lesson}`;
+      document.title = `KIIP Level ${QUIZ_META.level} - Lesson ${QUIZ_META.lesson} ${QUIZ_META.titleKo}`;
+    })();
+  </script>
 </body>
 </html>
